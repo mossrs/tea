@@ -1,0 +1,214 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>制茶</title>
+    <style>
+        /* *{
+            background-color: #bbb;
+        } */
+        body{font-size:84%;}
+        .dustbin{width:100px; height:100px;}
+        .dragbox{width:100px; height: 100px;}
+        .draglist{width:auto; height: auto; cursor:move; background-color: rgb(0, 0, 0, 0);}
+        /* .draglist:hover{border-color:#cad5eb; background-color:#f0f3f9;} */
+        .dragremind{padding-top:2em; clear:both;}
+    </style>
+    </head>
+    <body>
+        <div style="display: inline-block; position: absolute;" id="step3_text_before">
+            <p>第二步：杀青</p>
+            <p id="step3_steps01">将柴薪拖入柴洞。</p>
+            <p id="step3_steps02" style="display: none;">将另一根柴薪拖入柴洞。</p>
+            <a id="step3_steps03" style="display: none;" href="javascript:;">点火成功，杀青进行中，点击进行下一操作-></a>
+        </div>
+        <script>
+            var height_window = window.innerHeight;
+            var width_window = window.innerWidth;
+            var step3_text_before = document.getElementById('step3_text_before');
+            var step3_text_after = document.getElementById('step3_text_after');
+            step3_text_before.style.top = 0.4 * height_window;
+            step3_text_before.style.fontSize = 0.015 * width_window;
+            step3_text_after.style.top = 0.4 * height_window;
+            step3_text_after.style.right = 0;
+            step3_text_after.style.fontSize = 0.015 * width_window;
+            step3_text_after.style.display = 'none';
+        </script>
+        <div style="display: inline-block;">
+            <img src="../images/宋体字幕/杀青揉捻字幕.png" alt="" id="step3_the_txt" style="z-index: 999; display: inline-block; position: fixed;">
+            <img src="../images/step2/杀青1.png" alt="" id="step3_the_book" style="z-index: -999; display: inline-block; position: fixed;">
+            <img src="../images/step2/杀青2.png" alt="" id="step3_the_book_after" style="z-index: 999; display: inline-block; position: fixed; display: none;">
+            <img src="../images/step2/柴1.png" alt="" id="step3_the_chai1" style="z-index: -1; display: inline-block; position: fixed; display: none;">
+            <img src="../images/step2/柴2.png" alt="" id="step3_the_chai2" style="z-index: -1; display: inline-block; position: fixed; display: none;">
+            <script>
+                //背景图
+                var step3_step3_the_book = document.getElementById('step3_the_book');
+                step3_the_book.style.height = height_window;
+                step3_the_book.style.left = (width_window-step3_the_book.style.width)/3.15;
+                var step3_the_book_after = document.getElementById('step3_the_book_after');
+                step3_the_book_after.style.height = height_window;
+                step3_the_book_after.style.left = (width_window-step3_the_book_after.style.width)/3.15;
+                var step3_the_txt = document.getElementById('step3_the_txt');
+                step3_the_txt.style.height = height_window * 0.29;
+                step3_the_txt.style.left = (width_window-step3_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.12;
+                step3_the_txt.style.top = height_window * 0.62;
+                //柴火的定位
+                var step3_the_chai1 = document.getElementById('step3_the_chai1');
+                var step3_the_chai2 = document.getElementById('step3_the_chai2');
+                step3_the_chai1.style.height = 0.07 * height_window;
+                step3_the_chai2.style.height = 0.06 * height_window;
+                // 一号柴火的位置坐标
+                step3_the_chai1.style.left = (width_window-step3_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.24;
+                step3_the_chai1.style.transform = 'rotateZ(15deg)';
+                step3_the_chai1.style.top = 0.402 * height_window;
+                // 二号柴火的位置坐标
+                step3_the_chai2.style.left = (width_window-step3_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.28;
+                step3_the_chai2.style.top = 0.4015 * height_window;
+            </script>
+        </div>
+        <div class="dragbox">
+            <div class="draglist" draggable="true" style="position: absolute; top: 100px; left: 400px;">
+                <img src="../images/step2/柴1.png" alt="" id="step3_the_chai1_before" style="z-index: 0; display: inline-block; position: fixed;">
+            <img src="../images/step2/柴2.png" alt="" id="step3_the_chai2_before" style="z-index: 0; display: inline-block; position: fixed;">
+            </div>
+            <script>
+                //柴火的放置
+                var step3_the_chai1_before = document.getElementById('step3_the_chai1_before');
+                var step3_the_chai2_before = document.getElementById('step3_the_chai2_before');
+                step3_the_chai1_before.style.height = 0.07 * height_window;
+                step3_the_chai2_before.style.height = 0.06 * height_window;
+                // 一号柴火的位置坐标
+                step3_the_chai1_before.style.left = (width_window-step3_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.18;
+                step3_the_chai1_before.style.transform = 'rotateZ(90deg)';
+                step3_the_chai1_before.style.top = 0.502 * height_window;
+                // 二号柴火的位置坐标
+                step3_the_chai2_before.style.left = (width_window-step3_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.33;
+                step3_the_chai2_before.style.transform = 'rotateZ(260deg)';
+                step3_the_chai2_before.style.top = 0.5015 * height_window;
+            </script>
+        </div>
+        <div class="dragremind"></div>
+        <div style="height: 300px; width: 300px; position:absolute; top:300px; left:600px; background-color: aquamarine; display: none;" id="get_it_window"></div>
+    <!-- <script assert="https://zz.bdstatic.com/linksubmit/push.js"></script><script assert="https://hm.baidu.com/hm.js?48d8e938d5365a4cb0fc9e65d945018e"></script><script type="text/javascript" async="" assert="https://ssl.google-analytics.com/ga.js"></script> -->
+    <script>
+        var what_will_happen = 0;
+        var $ = function(selector) {
+            if (!selector) { return []; }
+            var arrEle = [];
+            if (document.querySelectorAll) {
+                arrEle = document.querySelectorAll(selector);
+            } else {
+                var oAll = document.getElementsByTagName("div"), lAll = oAll.length;
+                if (lAll) {
+                    var i = 0;
+                    for (i; i<lAll; i+=1) {
+                        if (/^\./.test(selector)) {
+                            if (oAll[i].className === selector.replace(".", "")) {
+                                arrEle.push(oAll[i]);
+                            }
+                        } else if(/^#/.test(selector)) {
+                            if (oAll[i].id === selector.replace("#", "")) {
+                                arrEle.push(oAll[i]);
+                            }
+                        }
+                    }
+                }
+            }
+            return arrEle;
+        };
+
+        var eleDustbin = $(".dustbin")[0], eleDrags = $(".draglist"), lDrags = eleDrags.length, eleRemind = $(".dragremind")[0], eleDrag = null;
+        for (var i=0; i<lDrags; i+=1) {
+            eleDrags[i].onselectstart = function() {
+                return false;
+            };
+            eleDrags[i].ondragstart = function(ev) {
+                ev.dataTransfer.effectAllowed = "move";
+                ev.dataTransfer.setData("text", ev.target.innerHTML);
+                ev.dataTransfer.setDragImage(ev.target, 0, 0);
+                eleDrag = ev.target;
+                return true;
+            };
+            eleDrags[i].ondragend = function(ev) {
+                ev.dataTransfer.clearData("text");
+                eleDrag = null;
+                return false
+            };
+        }
+        eleDustbin.ondragover = function(ev) {
+            ev.preventDefault();
+            return true;
+        };
+
+        eleDustbin.ondragenter = function(ev) {
+            this.style.color = "#ffffff";
+            return true;
+        };
+        eleDustbin.ondrop = function(ev) {
+            if (eleDrag) {
+                // eleRemind.innerHTML = '<strong>"' + eleDrag.innerHTML + '"</strong>被扔进了垃圾箱';
+                eleDrag.parentNode.removeChild(eleDrag);
+                if(what_will_happen == 0)
+                {
+                    step3_the_chai1.style.display = '';
+                    what_will_happen =1;
+                    document.getElementById('step3_steps01').style.display = 'none';
+                    document.getElementById('step3_steps02').style.display = '';
+                }
+                else if(what_will_happen == 1)
+                {
+                    step3_the_chai2.style.display = '';
+                    what_will_happen = 2;
+                    document.getElementById('step3_steps02').style.display = 'none';
+                    document.getElementById('step3_steps03').style.display = '';
+                }
+                if(what_will_happen == 2)
+                {
+                    sleep(300);
+                    step3_the_book_after.style.display = '';
+                    document.getElementById('step3_text_after').style.display = '';
+                }
+            }
+            this.style.color = "#000000";
+            return false;
+        };
+        function sleep(d){
+            for(var t = Date.now();Date.now() - t <= d;);
+        }
+    </script>
+    <!-- <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-11205167-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.assert = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.node-es6-js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script> -->
+    <!-- <script>
+        var _hmt = _hmt || [];
+        (function() {
+        var hm = document.createElement("script");
+        hm.assert = "https://hm.baidu.com/hm.js?48d8e938d5365a4cb0fc9e65d945018e";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+        })();
+    </script> -->
+    <!-- <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https'){
+        bp.assert = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else{
+        bp.assert = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script> -->
+    </body>
+    </html>

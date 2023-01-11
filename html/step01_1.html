@@ -1,0 +1,246 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>制茶</title>
+    <style>
+        /* *{
+            background-color: #bbb;
+        } */
+        body{font-size:84%;}
+        .dustbin{width:100px; height:100px;}
+        .dragbox{width:100px; height: 100px;}
+        .draglist{width:auto; height: auto; cursor:move; background-color: rgb(0, 0, 0, 0);}
+        /* .draglist:hover{border-color:#cad5eb; background-color:#f0f3f9;} */
+        .dragremind{padding-top:2em; clear:both;}
+    </style>
+    </head>
+    <body>
+        <div style="display: inline-block; position: absolute;" id="text_before">
+            <p>第一步：摊青</p>
+            <p id="steps01">从竹篓中拿出茶叶，放入空竹扁当中。</p>
+            <a id="steps02" style="display: none;" href="script:;">放入成功，点击进行下一操作-></a>
+        </div>
+        <script>
+            var height_window = window.innerHeight;
+            var width_window = window.innerWidth;
+            var text_before = document.getElementById('text_before');
+            var text_after = document.getElementById('text_after');
+            text_before.style.top = 0.4 * height_window;
+            text_before.style.fontSize = 0.015 * width_window;
+            text_after.style.top = 0.4 * height_window;
+            text_after.style.right = 0;
+            text_after.style.fontSize = 0.015 * width_window;
+            text_after.style.display = 'none';
+        </script>
+        <div style="display: inline-block;">
+
+            <img src="../images/p1.png" alt="" id="the_book" style="z-index: -999; display: inline-block; position: fixed;">
+            <img src="../images/宋体字幕/摊青字幕.png" id="the_txt" style="z-index: 999; display: inline-block; position: fixed;">
+            <img src="../images/竹篓.png"  title="竹篓" alt="" id="the_zhulou1" style="z-index: -1; display: inline-block; position: fixed;">
+            <img src="../images/竹篓.png"  title="竹篓" alt="" id="the_zhulou2" style="z-index: -1; display: inline-block; position: fixed;">
+            <img src="../images/竹篓.png"  title="竹篓" alt="" id="the_zhulou3" style="z-index: -1; display: inline-block; position: fixed;">
+            <img src="../images/放茶叶.png"  title="铺满茶叶的竹扁" alt="" id="the_fangchaye1" style="z-index: -1; display: inline-block; position: fixed;">
+            <img src="../images/放茶叶.png"  title="铺满茶叶的竹扁" alt="" id="the_fangchaye2" style="z-index: -1; display: inline-block; position: fixed;">
+            <img src="../images/未放竹扁.png"  title="放竹扁的架子" alt="" id="the_zhubian" style="z-index: -1; display: inline-block; position: fixed;">
+
+            <img src="../images/放茶叶.png" title="刚铺满茶叶的竹扁" alt="" id="the_fangchaye_after" style="z-index: -1; display: inline-block; position: fixed;">
+            <script>
+                //背景图
+                var the_book = document.getElementById('the_book');
+                the_book.style.height = height_window;
+                the_book.style.left = (width_window-the_book.style.width)/3.15;
+                var the_txt = document.getElementById('the_txt');
+                the_txt.style.height = height_window * 0.29;
+                the_txt.style.left = (width_window-the_book.style.width)/3.15 + height_window / 4 * 3 * 0.12;
+                the_txt.style.top = height_window * 0.62;
+                //竹篓的定位
+                var the_zhulou1 = document.getElementById('the_zhulou1');
+                var the_zhulou2 = document.getElementById('the_zhulou2');
+                var the_zhulou3 = document.getElementById('the_zhulou3');
+                the_zhulou1.style.height = 0.11 * height_window;
+                the_zhulou2.style.height = 0.11 * height_window;
+                the_zhulou3.style.height = 0.11 * height_window;
+                // 一号竹篓的位置坐标
+                the_zhulou1.style.left = (width_window-the_book.style.width)/3.15 + height_window / 4 * 3 * 0.62;
+                the_zhulou1.style.top = 0.22 * height_window;
+                // 二号竹篓的位置坐标
+                the_zhulou2.style.left = (width_window-the_book.style.width)/3.15 + height_window / 4 * 3 * 0.7;
+                the_zhulou2.style.top = 0.255 * height_window;
+                // 三号竹篓的位置坐标
+                the_zhulou3.style.left = (width_window-the_book.style.width)/3.15 + height_window / 4 * 3 * 0.75;
+                the_zhulou3.style.top = 0.45 * height_window;
+
+                //放茶叶的定位
+                var the_fangchaye1 = document.getElementById('the_fangchaye1');
+                var the_fangchaye2 = document.getElementById('the_fangchaye2');
+                the_fangchaye1.style.height = 0.07 * height_window;
+                the_fangchaye2.style.height = 0.07 * height_window;
+                // 一号放茶叶的位置坐标
+                the_fangchaye1.style.left = (width_window-the_book.style.width)/3.15 + height_window / 4 * 3 * 0.5;
+                the_fangchaye1.style.top = 0.34 * height_window;
+                the_fangchaye1.style.transform = 'rotateZ(-8deg)';
+                // 二号放茶叶的位置坐标
+                the_fangchaye2.style.left = (width_window-the_book.style.width)/3.15 + height_window / 4 * 3 * 0.6;
+                the_fangchaye2.style.top = 0.415 * height_window;
+                the_fangchaye2.style.transform = 'rotateZ(-2deg)';
+
+                //竹编定位
+                var the_zhubian = document.getElementById('the_zhubian');
+                the_zhubian.style.height = 0.4 * height_window;
+                the_zhubian.style.left = (width_window-the_book.style.width)/3.15 + height_window / 4 * 3 * 0.12;
+                the_zhubian.style.top = 0.16 * height_window;
+
+                //装好后的竹篮
+                var the_fangchaye_after = document.getElementById('the_fangchaye_after');
+                the_fangchaye_after.style.height = 0.07 * height_window;
+                the_fangchaye_after.style.left = (width_window-the_book.style.width)/3.15 + height_window / 4 * 3 * 0.44;
+                the_fangchaye_after.style.top = 0.475 * height_window;
+            </script>
+        </div>
+
+        <div class="dustbin" style="position: absolute;" id="the_kongzhubian">
+            <img src="../images/空竹扁.png" title="空竹扁" alt="" style="z-index: -1; display: inline-block; position: fixed;" id="the_kongzhubian_image">
+        </div>
+        <script>
+            var the_kongzhubian = document.getElementById('the_kongzhubian');
+            the_kongzhubian.style.left = (width_window-the_book.style.width)/3.15 + height_window / 4 * 3 * 0.44;
+            the_kongzhubian.style.top = 0.475 * height_window;
+            var the_kongzhubian_image = document.getElementById('the_kongzhubian_image');
+            the_kongzhubian_image.style.height = 0.07 * height_window;
+            the_kongzhubian.style.height = 0.07 * height_window;
+            the_kongzhubian.style.width = 0.07 * height_window * 1.7;
+        </script>
+        <div class="dragbox">
+            <div class="draglist" title="茶叶" draggable="true" style="position: absolute; top: 100px; left: 400px;">
+                <img src="../images/一堆茶叶.png" alt="" id="the_chaye1" style="z-index: 1; display: inline-block; position: fixed;">
+                <img src="../images/一堆茶叶.png" alt="" id="the_chaye2" style="z-index: 1; display: inline-block; position: fixed;">
+                <img src="../images/一堆茶叶.png" alt="" id="the_chaye3" style="z-index: 1; display: inline-block; position: fixed;">
+            </div>
+            <script>
+                //茶叶的放置
+                var the_chaye1 = document.getElementById('the_chaye1');
+                var the_chaye2 = document.getElementById('the_chaye2');
+                var the_chaye3 = document.getElementById('the_chaye3');
+                the_chaye1.style.height = 0.05 * height_window;
+                the_chaye2.style.height = 0.05 * height_window;
+                the_chaye3.style.height = 0.05 * height_window;
+                // 一、二、三号茶叶的位置坐标
+                the_chaye1.style.left = (width_window-the_book.style.width)/3.15 + height_window / 4 * 3 * 0.65;
+                the_chaye1.style.top = 0.225 * height_window;
+                the_chaye2.style.left = (width_window-the_book.style.width)/3.15 + height_window / 4 * 3 * 0.73;
+                the_chaye2.style.top = 0.26 * height_window;
+                the_chaye3.style.left = (width_window-the_book.style.width)/3.15 + height_window / 4 * 3 * 0.78;
+                the_chaye3.style.top = 0.455 * height_window;
+
+                the_chaye1.onmousedown = function(){
+                    naqichaye.play();
+                }
+            </script>
+        </div>
+
+        <audio src="../musics/拿起茶叶.mp3" id="naqichaye"></audio>
+        <div class="dragremind"></div>
+        <div style="height: 300px; width: 300px; position:absolute; top:300px; left:600px; background-color: aquamarine; display: none;" id="get_it_window"></div>
+    <!-- <script assert="https://zz.bdstatic.com/linksubmit/push.js"></script><script assert="https://hm.baidu.com/hm.js?48d8e938d5365a4cb0fc9e65d945018e"></script><script type="text/javascript" async="" assert="https://ssl.google-analytics.com/ga.js"></script> -->
+    <script>
+        var $ = function(selector) {
+            if (!selector) { return []; }
+            var arrEle = [];
+            if (document.querySelectorAll) {
+                arrEle = document.querySelectorAll(selector);
+            } else {
+                var oAll = document.getElementsByTagName("div"), lAll = oAll.length;
+                if (lAll) {
+                    var i = 0;
+                    for (i; i<lAll; i+=1) {
+                        if (/^\./.test(selector)) {
+                            if (oAll[i].className === selector.replace(".", "")) {
+                                arrEle.push(oAll[i]);
+                            }
+                        } else if(/^#/.test(selector)) {
+                            if (oAll[i].id === selector.replace("#", "")) {
+                                arrEle.push(oAll[i]);
+                            }
+                        }
+                    }
+                }
+            }
+            return arrEle;
+        };
+
+        var eleDustbin = $(".dustbin")[0], eleDrags = $(".draglist"), lDrags = eleDrags.length, eleRemind = $(".dragremind")[0], eleDrag = null;
+        for (var i=0; i<lDrags; i+=1) {
+            eleDrags[i].onselectstart = function() {
+                return false;
+            };
+            eleDrags[i].ondragstart = function(ev) {
+                ev.dataTransfer.effectAllowed = "move";
+                ev.dataTransfer.setData("text", ev.target.innerHTML);
+                ev.dataTransfer.setDragImage(ev.target, 0, 0);
+                eleDrag = ev.target;
+                return true;
+            };
+            eleDrags[i].ondragend = function(ev) {
+                ev.dataTransfer.clearData("text");
+                eleDrag = null;
+                return false
+            };
+        }
+        eleDustbin.ondragover = function(ev) {
+            ev.preventDefault();
+            return true;
+        };
+
+        eleDustbin.ondragenter = function(ev) {
+            this.style.color = "#ffffff";
+            return true;
+        };
+        eleDustbin.ondrop = function(ev) {
+            if (eleDrag) {
+                // eleRemind.innerHTML = '<strong>"' + eleDrag.innerHTML + '"</strong>被扔进了垃圾箱';
+                eleDrag.parentNode.removeChild(eleDrag);
+                document.getElementById('the_kongzhubian_image').style.display = 'none';
+                document.getElementById('steps01').style.display = 'none';
+                document.getElementById('steps02').style.display = '';
+            }
+            this.style.color = "#000000";
+            return false;
+        };
+    </script>
+    <!-- <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-11205167-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.assert = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.node-es6-js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script> -->
+    <!-- <script>
+        var _hmt = _hmt || [];
+        (function() {
+        var hm = document.createElement("script");
+        hm.assert = "https://hm.baidu.com/hm.js?48d8e938d5365a4cb0fc9e65d945018e";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+        })();
+    </script> -->
+    <!-- <script>
+        (function(){
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https'){
+        bp.assert = 'https://zz.bdstatic.com/linksubmit/push.js';
+        }
+        else{
+        bp.assert = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script> -->
+    </body>
+    </html>

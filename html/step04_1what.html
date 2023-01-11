@@ -1,0 +1,103 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>制茶</title>
+    <style>
+        /* *{
+            background-color: #bbb;
+        } */
+        body{font-size:84%;}
+        .dustbin{width:100px; height:100px;}
+        .dragbox{width:100px; height: 100px;}
+        .draglist{width:auto; height: auto; cursor:move; background-color: rgb(0, 0, 0, 0);}
+        /* .draglist:hover{border-color:#cad5eb; background-color:#f0f3f9;} */
+        .dragremind{padding-top:2em; clear:both;}
+    </style>
+    </head>
+    <body>
+        <div style="display: inline-block; position: absolute;" id="step4_text_before">
+            <p>第四步：烘培</p>
+            <p id="step4_steps01">闷黄完成后装入，点击箭头拌抹茶堆。</p>
+            <p id="step4_steps02" style="display: none;">茶堆呈中凸旁凹后，点击竹盖，起火烘焙。</p>
+            <a id="step4_text_after" style="display: none;" href="script:;">点击进行下一步-></a>
+        </div>
+        <script>
+            var height_window = window.innerHeight;
+            var width_window = window.innerWidth;
+            var step4_text_before = document.getElementById('step4_text_before');
+            var step4_text_after = document.getElementById('step4_text_after');
+            step4_text_before.style.top = 0.4 * height_window;
+            step4_text_before.style.fontSize = 0.015 * width_window;
+            step4_text_after.style.top = 0.4 * height_window;
+            step4_text_after.style.right = 0;
+            step4_text_after.style.fontSize = 0.015 * width_window;
+            step4_text_after.style.display = 'none';
+        </script>
+        <div style="display: inline-block;">
+            <img src="../images/step4/烘焙1.png" alt="" id="the_hongbei_before1" style="z-index: -999; display: inline-block; position: fixed;">
+            <img src="../images/step4/烘焙2.png" alt="" id="the_hongbei_before2" style="z-index: -998; display: inline-block; position: fixed; display: none;">
+            <img src="../images/step4/烘焙关盖.png" alt="" id="the_hongbei_after" style="z-index: -997; display: inline-block; position: fixed; display: none;">
+            <img src="../images/step4/箭头.png" alt="" id="the_jiantou" style="z-index: -996; display: inline-block; position: fixed;">
+            <img src="../images/宋体字幕/烘焙字幕.png" alt="" style="z-index: 999; display: inline-block; position: fixed;" id="step4_the_txt">
+            <script>
+                //背景图
+                var the_hongbei_before1 = document.getElementById('the_hongbei_before1');
+                the_hongbei_before1.style.height = height_window;
+                the_hongbei_before1.style.left = width_window / 2 - height_window / 2020 * 1540 / 2;
+                var the_hongbei_before2 = document.getElementById('the_hongbei_before2');
+                the_hongbei_before2.style.height = height_window;
+                the_hongbei_before2.style.left = width_window / 2 - height_window / 2020 * 1540 / 2;
+                var the_hongbei_after = document.getElementById('the_hongbei_after');
+                the_hongbei_after.style.height = height_window;
+                the_hongbei_after.style.left = width_window / 2 - height_window / 2020 * 1540 / 2;
+                var the_jiantou = document.getElementById('the_jiantou');
+                the_jiantou.style.height = 0.03 * height_window;
+                the_jiantou.style.left = width_window / 2 - height_window / 2020 * 1540 / 2 + height_window / 4 * 3 * 0.38;
+                the_jiantou.style.top = 0.17 * height_window;
+                
+                var step4_the_txt = document.getElementById('step4_the_txt');
+                step4_the_txt.style.height = height_window * 0.29;
+                step4_the_txt.style.left = width_window / 2 - height_window / 2020 * 1540 / 2 + height_window / 4 * 3 * 0.12;
+                step4_the_txt.style.top = height_window * 0.62;
+            </script>
+        </div>
+        <div>
+            <a href="script:;">
+                <div style="width: 100px; height: 100px; position: fixed; display: inline-block;" id="step4_touch">
+                </div>
+            </a>
+            <script>
+                var step4_touch = document.getElementById('step4_touch');
+                step4_touch.style.top = 0.17 * height_window;
+                step4_touch.style.left = width_window / 2 - height_window / 2020 * 1540 / 2 + height_window / 4 * 3 * 0.38;
+                step4_touch.style.height = 0.03 * height_window;
+                step4_touch.style.width = 0.03 * height_window / 50 * 290;
+            </script>
+        </div>
+        <div class="dragremind"></div>
+    <script>
+        var touch_times = 0;
+        step4_touch.onclick = function(){
+            if(touch_times == 0)
+            {
+                the_hongbei_before2.style.display = '';
+                the_hongbei_before1.style.display = 'none';
+                touch_times = 1;
+                step4_touch.style.top = 0.275 * height_window;
+                step4_touch.style.left = width_window / 2 - height_window / 2020 * 1540 / 2 + height_window / 4 * 3 * 0.62;
+                step4_touch.style.height = 0.225 * height_window;
+                step4_touch.style.width = 0.225 * height_window / 4 * 3;
+                document.getElementById('step4_steps01').style.display = 'none';
+                document.getElementById('step4_steps02').style.display = '';
+            }
+            else if(touch_times == 1)
+            {
+                the_hongbei_after.style.display = '';
+                the_hongbei_before2.style.display = 'none';
+                touch_times = 2;
+                document.getElementById('step4_steps02').style.display = 'none';
+                document.getElementById('step4_text_after').style.display = '';
+            }
+        }
+    </script>
+    </body>
+    </html>

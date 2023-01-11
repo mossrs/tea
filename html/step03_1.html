@@ -1,0 +1,132 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>制茶</title>
+  <style>
+    /* *{
+        background-color: #bbb;
+    } */
+    body {
+      font-size: 84%;
+    }
+
+    .dustbin {
+      width: 100px;
+      height: 100px;
+    }
+
+    .dragbox {
+      width: 100px;
+      height: 100px;
+    }
+
+    .draglist {
+      width: auto;
+      height: auto;
+      cursor: move;
+      background-color: rgb(0, 0, 0, 0);
+    }
+
+    /* .draglist:hover{border-color:#cad5eb; background-color:#f0f3f9;} */
+    .dragremind {
+      padding-top: 2em;
+      clear: both;
+    }
+  </style>
+</head>
+<body>
+<div style="display: inline-block; position: absolute;" id="step3_text_before">
+  <p>第三步：闷黄</p>
+  <p id="step3_steps01">杀青后装入茶包进行闷黄。打开查看茶叶色泽。</p>
+  <p id="step3_steps02" style="display: none;">茶色泛绿，点击关闭茶包，继续闷黄。</p>
+  <p id="step3_steps03" style="display: none;">再次打开茶包，查看茶叶色泽。</p>
+  <a id="step3_steps04" style="display: none;" href="javascript:;">茶根起黄，闷黄完成，点击进行下一操作-></a>
+</div>
+<script>
+  var height_window = window.innerHeight;
+  var width_window = window.innerWidth;
+  var step3_text_before = document.getElementById('step3_text_before');
+  var step3_text_after = document.getElementById('step3_text_after');
+  step3_text_before.style.top = 0.4 * height_window;
+  step3_text_before.style.fontSize = 0.015 * width_window;
+  step3_text_after.style.top = 0.4 * height_window;
+  step3_text_after.style.right = 0;
+  step3_text_after.style.fontSize = 0.015 * width_window;
+  step3_text_after.style.display = 'none';
+</script>
+<div style="display: inline-block;">
+  <img src="../images/宋体字幕/闷黄字幕.png" alt="" style="z-index: 999; display: inline-block; position: fixed;"
+       id="step3_the_txt">
+  <img src="../images/宋体字幕/复闷字幕.png" alt="" style="z-index: 999; display: inline-block; position: fixed; display: none;"
+       id="step3_the_txt_after">
+  <img src="../images/step3/闷黄未打开.png" alt="" id="step3_the_menhuang_before"
+       style="z-index: -999; display: inline-block; position: fixed;">
+  <img src="../images/step3/闷黄打开1.png" alt="" id="step3_the_menhuang_after1"
+       style="z-index: -998; display: inline-block; position: fixed; display: none;">
+  <img src="../images/step3/闷黄打开2.png" alt="" id="step3_the_menhuang_after2"
+       style="z-index: -997; display: inline-block; position: fixed; display: none;">
+  <script>
+    //背景图
+    var the_menhuang_before = document.getElementById('the_menhuang_before');
+    the_menhuang_before.style.height = height_window;
+    the_menhuang_before.style.left = (width_window - the_menhuang_before.style.width) / 3.15;
+    var the_menhuang_after1 = document.getElementById('the_menhuang_after1');
+    the_menhuang_after1.style.height = height_window;
+    the_menhuang_after1.style.left = (width_window - the_menhuang_after1.style.width) / 3.15;
+    var the_menhuang_after2 = document.getElementById('the_menhuang_after2');
+    the_menhuang_after2.style.height = height_window;
+    the_menhuang_after2.style.left = (width_window - the_menhuang_after2.style.width) / 3.15;
+
+    var the_txt = document.getElementById('step3_the_txt');
+    step3_the_txt.style.height = height_window * 0.29;
+    step3_the_txt.style.left = (width_window - the_menhuang_before.style.width) / 3.15 + height_window / 4 * 3 * 0.12;
+    step3_the_txt.style.top = height_window * 0.62;
+
+    var step3_the_txt_after = document.getElementById('step3_the_txt_after');
+    step3_the_txt_after.style.height = height_window * 0.29;
+    step3_the_txt_after.style.left = (width_window - the_menhuang_before.style.width) / 3.15 + height_window / 4 * 3 * 0.12;
+    step3_the_txt_after.style.top = height_window * 0.62;
+  </script>
+</div>
+<div>
+  <a href="script:;">
+    <div style="width: 100px; height: 100px; position: fixed; display: inline-block;" id="touch">
+    </div>
+  </a>
+  <script>
+    var touch = document.getElementById('touch');
+    touch.style.top = 0.26 * height_window;
+    touch.style.left = (width_window - the_menhuang_before.style.width) / 3.15 + height_window / 4 * 3 * 0.38;
+    touch.style.height = 0.095 * height_window;
+    touch.style.width = 0.095 * height_window * 1.73;
+  </script>
+</div>
+<div class="dragremind"></div>
+<script>
+  var touch_times = 0;
+  touch.onclick = function () {
+    if (touch_times == 0) {
+      the_menhuang_after1.style.display = '';
+      the_menhuang_before.style.display = 'none';
+      touch_times = 1;
+      document.getElementById('step3_steps01').style.display = 'none';
+      document.getElementById('step3_steps02').style.display = '';
+    } else if (touch_times == 1) {
+      the_menhuang_before.style.display = '';
+      the_menhuang_after1.style.display = 'none';
+      touch_times = 2;
+      document.getElementById('step3_steps02').style.display = 'none';
+      document.getElementById('step3_steps03').style.display = '';
+      document.getElementById('step3_the_txt').style.display = 'none';
+      document.getElementById('step3_the_txt_after').style.display = '';
+    } else if (touch_times == 2) {
+      the_menhuang_after2.style.display = '';
+      the_menhuang_before.style.display = 'none';
+      touch_times = 3;
+      document.getElementById('step3_steps03').style.display = 'none';
+      document.getElementById('step3_steps04').style.display = '';
+    }
+  }
+</script>
+</body>
+</html>

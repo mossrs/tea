@@ -1,0 +1,1042 @@
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>制茶</title>
+    <style>
+        /* *{
+            background-color: #bbb;
+        } */
+        body{font-size:84%;}
+        .dustbin{width:100px; height:100px;}
+        .dragbox{width:100px; height: 100px;}
+        .draglist{width:auto; height: auto; cursor:move; background-color: rgb(0, 0, 0, 0);}
+        /* .draglist:hover{border-color:#cad5eb; background-color:#f0f3f9;} */
+        .dragremind{padding-top:2em; clear:both;}
+    </style>
+    </head>
+    <body>
+        <script>
+            var time_step = 0;
+            var what_will_happen = 0;
+            var times = 0;
+        </script>
+        <div class="dustbin" style="position: absolute;" id="step01_the_kongzhubian">
+            <img src="../images/空竹扁.png" alt="" style="z-index: 999; display: inline-block; position: fixed;" id="step01_the_kongzhubian_image">
+        </div>
+        <div id="step0000">
+            <audio src="../musics/背景音乐.mp3" id="backgroundmusic01" loop></audio>
+            <script>
+                var backgroundmusic01 = document.getElementById('backgroundmusic01');
+                onmousemove = function(){
+                    backgroundmusic01.volume=0.1;
+                    backgroundmusic01.play();
+                }
+            </script>
+            <div style="display: inline-block;">
+                <div id='book' style="z-index: -999">
+                    <img src="../images/step1/摊青未放竹扁.png" alt="" id="book_ground" style="display: inline-block; position: absolute;z-index: -999">
+                    <div id='rightPage' style="transform-style: preserve-3d;transform: perspective(800px) rotateY(0px);transition: 0.5s;z-index: -999">
+                        <img src="../images/组 3.png" alt="" id="step00_the_book" style="z-index: -999; display: inline-block; position: absolute;transform: translateZ(1px);">
+                        <img src="../images/p1.png" alt="" id='bottomNode' style="display: inline-block; position: absolute;transform: translateZ(-1px) scaleX(-1);z-index: -999">
+                    </div>
+                    <div id='rightOtherPage'></div>
+                </div>
+
+                <a href="script:;" style="display: inline-block; position: absolute;" id="the_a">
+                    <img src="../images/点击阅读按钮.gif" alt="" id="the_a_img" style="z-index: 1000;display: inline-block; position: absolute;">
+                </a>
+                <script>
+                    //背景图
+                    var height_window = window.innerHeight;
+                    var width_window = window.innerWidth;
+                    var step00_the_book = document.getElementById('step00_the_book');
+                    if(height_window<width_window)
+                    {
+                        step00_the_book.style.height = height_window;
+                        bottomNode.style.height = height_window;
+                        book_ground.style.height = height_window;
+
+                        step00_the_book.style.left = (width_window-step00_the_book.style.width)/3.15;
+                        bottomNode.style.left = (width_window-step00_the_book.style.width)/3.15;
+                        book_ground.style.left = (width_window-step00_the_book.style.width)/3.15;
+
+                        var a_img = document.getElementById('the_a_img');
+                        a_img.style.height = height_window * 0.09;
+                        a_img.style.top = height_window * 0.7;
+                        a_img.style.left = (width_window-step00_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.3;
+                        document.getElementById('the_a').onclick = function(){
+                        document.getElementById('step0000').style.display = 'none'
+                        document.getElementById('step0001').style.display = ''
+                        }
+                    }
+                    else
+                    {
+                        step00_the_book.style.width = width_window;
+                        bottomNode.style.width = width_window;
+                        book_ground.style.width = width_window;
+
+                        step00_the_book.style.top = (height_window-width_window*4.3/3)/2;
+                        bottomNode.style.top = (height_window-width_window*4.3/3)/2;
+                        book_ground.style.top = (height_window-width_window*4.3/3)/2;
+
+                        var a_img = document.getElementById('the_a_img');
+                        a_img.style.width = width_window * 0.4;
+                        a_img.style.left = width_window * 0.32;
+                        a_img.style.top = (height_window-width_window*4.3/3)/2 + width_window * 4.3 / 3 * 0.7;
+                        document.getElementById('the_a').onclick = function(){
+                            var flag = false;
+                            if (flag){return};
+                            flag = true;
+                            rightPage.style.transition = '0.5s';
+                            rightPage.style.transform = 'perspective(800px) rotateY(-180deg)';
+
+                            setTimeout(function () {
+                                // 翻页后瞬间更换下一页的背景
+                                book_ground.src = '../images/step1/摊青放竹扁.png';
+                                // 让翻页瞬间回去
+                                rightPage.style.transition = '0s';
+                                rightPage.style.transform = 'perspective(800px) rotateY(0deg)';
+
+                                // 更换翻页纸正面背景
+                                step00_the_book.src = '../images/step1/摊青未放竹扁.png';
+                                // 更换翻页纸背面背景
+                                // bottomNode.style.background = 'blue'
+
+                                // 更换翻页后的纸背景
+                                rightOtherPage.src = '../images/step1/摊青未放竹扁.png';
+
+                                flag = false;
+
+                            }, 500);
+                        // document.getElementById('step0000').style.display = 'none'
+                        document.getElementById('step0001').style.display = ''
+                        }
+                    }
+                </script>
+            </div>
+        </div>
+
+
+        <div style="display: none;" id="step0001">
+            <div style="display: inline-block; position: absolute;" id="step01_text_before">
+                <p>第一步：摊青</p>
+                <p id="step01_steps01">从竹篓中拿出茶叶，放入空竹扁当中。</p>
+                <a id="step01_steps02" style="display: none;" href="javascript:void(0);" onclick="jump_to_1_2()">放入成功，点击进行下一操作-></a>
+            </div>
+            <script>
+                var step01_text_before = document.getElementById('step01_text_before');
+                var text_after = document.getElementById('step01_text_after');
+                step01_text_before.style.top = 0.4 * height_window;
+                step01_text_before.style.fontSize = 0.015 * width_window;
+                step01_text_after.style.top = 0.4 * height_window;
+                step01_text_after.style.right = 0;
+                step01_text_after.style.fontSize = 0.015 * width_window;
+                step01_text_after.style.display = 'none';
+
+
+
+                function jump_to_1_2(){
+                    document.getElementById('step0001').style.display = 'none';
+                    document.getElementById('step0001_2').style.display = '';
+                    time_step = 100;
+                    step01_the_kongzhubian_image.style.display = '';
+                    step01_the_kongzhubian_image.src="../images/未放竹扁.png";
+                    step01_the_kongzhubian_image.style.zIndex = 999;
+
+                    step01_the_kongzhubian_image.style.height = 0.4 * height_window;
+                    step01_the_kongzhubian_image.style.left = (width_window-step01_2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.12;
+                    step01_the_kongzhubian_image.style.top = 0.16 * height_window;
+            }
+            </script>
+            <div style="display: inline-block;">
+                <img src="../images/p1.png" alt="" id="step01_the_book" style="z-index: -999; display: inline-block; position: fixed;opacity: 0;">
+                <img src="../images/宋体字幕/摊青字幕.png" id="step01_the_txt" style="z-index: 999; display: inline-block; position: fixed;">
+                <img src="../images/竹篓.png"  title="竹篓" alt="" id="step01_the_zhulou1" style="z-index: -1; display: inline-block; position: fixed;">
+                <img src="../images/竹篓.png"  title="竹篓" alt="" id="step01_the_zhulou2" style="z-index: -1; display: inline-block; position: fixed;">
+                <img src="../images/竹篓.png"  title="竹篓" alt="" id="step01_the_zhulou3" style="z-index: -1; display: inline-block; position: fixed;">
+                <img src="../images/放茶叶.png"  title="铺满茶叶的竹扁" alt="" id="step01_the_fangchaye1" style="z-index: -1; display: inline-block; position: fixed;">
+                <img src="../images/放茶叶.png"  title="铺满茶叶的竹扁" alt="" id="step01_the_fangchaye2" style="z-index: -1; display: inline-block; position: fixed;">
+                <img src="../images/未放竹扁.png"  title="放竹扁的架子" alt="" id="step01_the_zhubian" style="z-index: -1; display: inline-block; position: fixed;">
+
+                <img src="../images/放茶叶.png" title="刚铺满茶叶的竹扁" alt="" id="step01_the_fangchaye_after" style="z-index: -1; display: inline-block; position: fixed;">
+                <script>
+                    //背景图
+                    var step01_the_book = document.getElementById('step01_the_book');
+                    step01_the_book.style.height = height_window;
+                    step01_the_book.style.left = (width_window-step01_the_book.style.width)/3.15;
+                    var step01_the_txt = document.getElementById('step01_the_txt');
+                    step01_the_txt.style.height = height_window * 0.29;
+                    step01_the_txt.style.left = (width_window-step01_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.12;
+                    step01_the_txt.style.top = height_window * 0.62;
+                    //竹篓的定位
+                    var step01_the_zhulou1 = document.getElementById('step01_the_zhulou1');
+                    var step01_the_zhulou2 = document.getElementById('step01_the_zhulou2');
+                    var step01_the_zhulou3 = document.getElementById('step01_the_zhulou3');
+                    step01_the_zhulou1.style.height = 0.11 * height_window;
+                    step01_the_zhulou2.style.height = 0.11 * height_window;
+                    step01_the_zhulou3.style.height = 0.11 * height_window;
+                    // 一号竹篓的位置坐标
+                    step01_the_zhulou1.style.left = (width_window-step01_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.62;
+                    step01_the_zhulou1.style.top = 0.22 * height_window;
+                    // 二号竹篓的位置坐标
+                    step01_the_zhulou2.style.left = (width_window-step01_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.7;
+                    step01_the_zhulou2.style.top = 0.255 * height_window;
+                    // 三号竹篓的位置坐标
+                    step01_the_zhulou3.style.left = (width_window-step01_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.75;
+                    step01_the_zhulou3.style.top = 0.45 * height_window;
+
+                    //放茶叶的定位
+                    var step01_the_fangchaye1 = document.getElementById('step01_the_fangchaye1');
+                    var step01_the_fangchaye2 = document.getElementById('step01_the_fangchaye2');
+                    step01_the_fangchaye1.style.height = 0.07 * height_window;
+                    step01_the_fangchaye2.style.height = 0.07 * height_window;
+                    // 一号放茶叶的位置坐标
+                    step01_the_fangchaye1.style.left = (width_window-step01_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.5;
+                    step01_the_fangchaye1.style.top = 0.34 * height_window;
+                    step01_the_fangchaye1.style.transform = 'rotateZ(-8deg)';
+                    // 二号放茶叶的位置坐标
+                    step01_the_fangchaye2.style.left = (width_window-step01_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.6;
+                    step01_the_fangchaye2.style.top = 0.415 * height_window;
+                    step01_the_fangchaye2.style.transform = 'rotateZ(-2deg)';
+
+                    //竹编定位
+                    var step01_the_zhubian = document.getElementById('step01_the_zhubian');
+                    step01_the_zhubian.style.height = 0.4 * height_window;
+                    step01_the_zhubian.style.left = (width_window-step01_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.12;
+                    step01_the_zhubian.style.top = 0.16 * height_window;
+
+                    //装好后的竹篮
+                    var step01_the_fangchaye_after = document.getElementById('step01_the_fangchaye_after');
+                    step01_the_fangchaye_after.style.height = 0.07 * height_window;
+                    step01_the_fangchaye_after.style.left = (width_window-step01_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.44;
+                    step01_the_fangchaye_after.style.top = 0.475 * height_window;
+                </script>
+            </div>
+
+
+            <script>
+                var step01_the_kongzhubian = document.getElementById('step01_the_kongzhubian');
+                step01_the_kongzhubian.style.left = (width_window-step01_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.44;
+                step01_the_kongzhubian.style.top = 0.475 * height_window;
+                var step01_the_kongzhubian_image = document.getElementById('step01_the_kongzhubian_image');
+                step01_the_kongzhubian_image.style.height = 0.07 * height_window;
+                step01_the_kongzhubian.style.height = 0.07 * height_window;
+                step01_the_kongzhubian.style.width = 0.07 * height_window * 1.7;
+            </script>
+            <div class="dragbox">
+                <div class="draglist" title="茶叶" draggable="true" style="position: absolute; top: 100px; left: 400px;">
+                    <img src="../images/一堆茶叶.png" alt="" id="step01_the_chaye1" style="z-index: 1; display: inline-block; position: fixed;">
+                    <img src="../images/一堆茶叶.png" alt="" id="step01_the_chaye2" style="z-index: 1; display: inline-block; position: fixed;">
+                    <img src="../images/一堆茶叶.png" alt="" id="step01_the_chaye3" style="z-index: 1; display: inline-block; position: fixed;">
+                </div>
+                <script>
+                    //茶叶的放置
+                    var step01_the_chaye1 = document.getElementById('step01_the_chaye1');
+                    var step01_the_chaye2 = document.getElementById('step01_the_chaye2');
+                    var step01_the_chaye3 = document.getElementById('step01_the_chaye3');
+                    step01_the_chaye1.style.height = 0.05 * height_window;
+                    step01_the_chaye2.style.height = 0.05 * height_window;
+                    step01_the_chaye3.style.height = 0.05 * height_window;
+                    // 一、二、三号茶叶的位置坐标
+                    step01_the_chaye1.style.left = (width_window-step01_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.65;
+                    step01_the_chaye1.style.top = 0.225 * height_window;
+                    step01_the_chaye2.style.left = (width_window-step01_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.73;
+                    step01_the_chaye2.style.top = 0.26 * height_window;
+                    step01_the_chaye3.style.left = (width_window-step01_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.78;
+                    step01_the_chaye3.style.top = 0.455 * height_window;
+
+                    step01_the_chaye1.onmousedown = function(){
+                        naqichaye.load();
+                        naqichaye.play();
+                    }
+                    step01_the_chaye2.onmousedown = function(){
+                        naqichaye.load();
+                        naqichaye.play();
+                    }
+                    step01_the_chaye3.onmousedown = function(){
+                        naqichaye.load();
+                        naqichaye.play();
+                    }
+                </script>
+            </div>
+
+            <audio src="../musics/拿起茶叶.mp3" id="naqichaye"></audio>
+            <audio src="../musics/放下茶叶.mp3" id="fangxiachaye"></audio>
+            <audio src="../musics/闷黄打开包裹.mp3" id="menghuangdakaibaoguo"></audio>
+            <audio src="../musics/杀青放入柴火后.mp3" id="fangruchaihuohou" loop></audio>
+            <audio src="../musics/叶子_Freesound.mp3" id="yezi_freesound"></audio>
+            <div class="dragremind"></div>
+            <div style="height: 300px; width: 300px; position:absolute; top:300px; left:600px; background-color: aquamarine; display: none;" id="get_it_window"></div>
+        <!-- <script assert="https://zz.bdstatic.com/linksubmit/push.js"></script><script assert="https://hm.baidu.com/hm.js?48d8e938d5365a4cb0fc9e65d945018e"></script><script type="text/javascript" async="" assert="https://ssl.google-analytics.com/ga.js"></script> -->
+        <script>
+            var $ = function(selector) {
+                if (!selector) { return []; }
+                var arrEle = [];
+                if (document.querySelectorAll) {
+                    arrEle = document.querySelectorAll(selector);
+                } else {
+                    var oAll = document.getElementsByTagName("div"), lAll = oAll.length;
+                    if (lAll) {
+                        var i = 0;
+                        for (i; i<lAll; i+=1) {
+                            if (/^\./.test(selector)) {
+                                if (oAll[i].className === selector.replace(".", "")) {
+                                    arrEle.push(oAll[i]);
+                                }
+                            } else if(/^#/.test(selector)) {
+                                if (oAll[i].id === selector.replace("#", "")) {
+                                    arrEle.push(oAll[i]);
+                                }
+                            }
+                        }
+                    }
+                }
+                return arrEle;
+            };
+
+            var eleDustbin = $(".dustbin")[0], eleDrags = $(".draglist"), lDrags = eleDrags.length, eleRemind = $(".dragremind")[0], eleDrag = null;
+            for (var i=0; i<lDrags; i+=1) {
+                eleDrags[i].onselectstart = function() {
+                    return false;
+                };
+                eleDrags[i].ondragstart = function(ev) {
+                    ev.dataTransfer.effectAllowed = "move";
+                    ev.dataTransfer.setData("text", ev.target.innerHTML);
+                    ev.dataTransfer.setDragImage(ev.target, 0, 0);
+                    eleDrag = ev.target;
+                    return true;
+                };
+                eleDrags[i].ondragend = function(ev) {
+                    ev.dataTransfer.clearData("text");
+                    eleDrag = null;
+                    return false
+                };
+            }
+            eleDustbin.ondragover = function(ev) {
+                ev.preventDefault();
+                return true;
+            };
+
+            eleDustbin.ondragenter = function(ev) {
+                this.style.color = "#ffffff";
+                return true;
+            };
+            eleDustbin.ondrop = function(ev) {
+                if (eleDrag) {
+                    if(time_step==0){
+                        // eleRemind.innerHTML = '<strong>"' + eleDrag.innerHTML + '"</strong>被扔进了垃圾箱';
+                        eleDrag.parentNode.removeChild(eleDrag);
+                        document.getElementById('step01_the_kongzhubian_image').style.display = 'none';
+                        document.getElementById('step01_steps01').style.display = 'none';
+                        document.getElementById('step01_steps02').style.display = '';
+                        naqichaye.load();
+                        fangxiachaye.play();
+                    }
+                    else if(time_step==100)
+                    {
+                        step01_2_the_fangchaye.style.display = 'none';
+                        document.getElementById('step01_the_kongzhubian_image').style.display = 'none';
+                        step01_2_the_fangruzhubian.style.display = ''
+                        document.getElementById('step01_2_steps01').style.display = 'none';
+                        document.getElementById('step01_2_steps02').style.display = '';
+                        menghuangdakaibaoguo.load();
+                        menghuangdakaibaoguo.play();
+                    }
+                    else if(time_step==200)
+                    {
+                        if(what_will_happen == 0)
+                        {
+                            step2_the_chai1.style.display = '';
+                            what_will_happen =1;
+                            document.getElementById('step2_steps01').style.display = 'none';
+                            document.getElementById('step2_steps02').style.display = '';
+                            menghuangdakaibaoguo.load();
+                            menghuangdakaibaoguo.play();
+                        }
+                        else if(what_will_happen == 1)
+                        {
+                            step2_the_chai2.style.display = '';
+                            what_will_happen = 2;
+                            document.getElementById('step2_steps02').style.display = 'none';
+                            document.getElementById('step2_text_after').style.display = '';
+                            menghuangdakaibaoguo.load();
+                            menghuangdakaibaoguo.play();
+                        }
+                        if(what_will_happen == 2)
+                        {
+                            step2_the_book_after.style.display = '';
+                            step2_text_after.style.display = '';
+                            fangruchaihuohou.load();
+                            fangruchaihuohou.play();
+                        }
+                    }
+                    else if(time_step==300)
+                    {
+                        if(times==0){
+                            the_ganzaoshikuang.style.display = '';
+                            step01_the_kongzhubian_image.style.filter = 'opacity(0%)';
+                            step01_the_kongzhubian_image.style.top = 0.27*height_window;
+                            step01_the_kongzhubian_image.style.left = 0.38*width_window;
+                            document.getElementById('step5_steps01').style.display = 'none';
+                            document.getElementById('step5_steps02').style.display = '';
+                            times=1;
+                            fangxiachaye.load();
+                            fangxiachaye.play();
+                        }
+                        else if(times==1)
+                        {
+                            the_ganzaoshikuang.style.display = 'none';
+                            the_kongkuang.style.display = 'none';
+                            step01_the_kongzhubian_image.style.display = 'none';
+                            the_ganzao_after.style.display = '';
+                            document.getElementById('step5_steps02').style.display = 'none';
+                            document.getElementById('step5_steps03').style.display = '';
+                            times=2;
+                            menghuangdakaibaoguo.load();
+                            menghuangdakaibaoguo.play();
+                        }
+                    }
+                }
+                this.style.color = "#000000";
+                return false;
+            };
+        </script>
+        </div>
+        <div style="display: none;" id="step0001_2">
+            <div style="display: inline-block; position: absolute;" id="step01_2_text_before">
+                <p>第一步：摊青</p>
+                <p id="step01_2_steps01">将刚铺满茶叶的竹扁放入竹扁架的空余处。</p>
+                <a id="step01_2_steps02" style="display: none;" href="javascript:void(0);" onclick="goto_secand()">放入成功，点击进行下一操作-></a>
+            </div>
+            <script>
+                var step01_2_text_before = document.getElementById('step01_2_text_before');
+                var step01_2_text_after = document.getElementById('step01_2_text_after');
+                step01_2_text_before.style.top = 0.4 * height_window;
+                step01_2_text_before.style.fontSize = 0.015 * width_window;
+                step01_2_text_after.style.top = 0.4 * height_window;
+                step01_2_text_after.style.right = 0;
+                step01_2_text_after.style.fontSize = 0.015 * width_window;
+                step01_2_text_after.style.display = 'none';
+                function goto_secand(){
+                    document.getElementById('step0001_2').style.display = 'none';
+                    document.getElementById('step0002').style.display = '';
+                    step01_the_kongzhubian_image.zIndex = -1;
+                    step01_the_kongzhubian_image.src = '../images/step2/放柴洞.png'
+                    step01_the_kongzhubian_image.style.display = ''
+
+                    step01_the_kongzhubian_image.style.left = (width_window-step01_2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.231;
+                    step01_the_kongzhubian_image.style.top = 0.395 * height_window;
+                    step01_the_kongzhubian_image.style.height = 0.046 * height_window;
+
+                    time_step = 200;
+                }
+            </script>
+            <div style="display: inline-block;">
+                <img src="../images/p1.png" alt="" id="step01_2_the_book" style="z-index: -999; display: inline-block; position: fixed;">
+                <img src="../images/宋体字幕/摊青字幕.png" id="step01_2_the_txt" style="z-index: 999; display: inline-block; position: fixed;">
+                <img src="../images/竹篓.png" title="竹篓" alt="" id="step01_2_the_zhulou1" style="z-index: -1; display: inline-block; position: fixed;">
+                <img src="../images/竹篓.png" title="竹篓" alt="" id="step01_2_the_zhulou2" style="z-index: -1; display: inline-block; position: fixed;">
+                <img src="../images/竹篓.png" title="竹篓" alt="" id="step01_2_the_zhulou3" style="z-index: -1; display: inline-block; position: fixed;">
+                <img src="../images/放茶叶.png" title="铺满茶叶的竹扁" alt="" id="step01_2_the_fangchaye1" style="z-index: -1; display: inline-block; position: fixed;">
+                <img src="../images/放茶叶.png" title="铺满茶叶的竹扁" alt="" id="step01_2_the_fangchaye2" style="z-index: -1; display: inline-block; position: fixed;">
+                <img src="../images/放入竹扁.png" title="放竹扁的架子" alt="" id="step01_2_the_fangruzhubian" style="z-index: -2; display: inline-block; position: fixed;">
+                <script>
+                    //背景图
+                    var step01_2_the_book = document.getElementById('step01_2_the_book');
+                    step01_2_the_book.style.height = height_window;
+                    step01_2_the_book.style.left = (width_window-step01_2_the_book.style.width)/3.15;
+                    var the_txt = document.getElementById('step01_2_the_txt');
+                    step01_2_the_txt.style.height = height_window * 0.29;
+                    step01_2_the_txt.style.left = (width_window-step01_2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.12;
+                    step01_2_the_txt.style.top = height_window * 0.62;
+                    //竹篓的定位
+                    var step01_2_the_zhulou1 = document.getElementById('step01_2_the_zhulou1');
+                    var step01_2_the_zhulou2 = document.getElementById('step01_2_the_zhulou2');
+                    var step01_2_the_zhulou3 = document.getElementById('step01_2_the_zhulou3');
+                    step01_2_the_zhulou1.style.height = 0.11 * height_window;
+                    step01_2_the_zhulou2.style.height = 0.11 * height_window;
+                    step01_2_the_zhulou3.style.height = 0.11 * height_window;
+                    // 一号竹篓的位置坐标
+                    step01_2_the_zhulou1.style.left = (width_window-step01_2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.62;
+                    step01_2_the_zhulou1.style.top = 0.22 * height_window;
+                    // 二号竹篓的位置坐标
+                    step01_2_the_zhulou2.style.left = (width_window-step01_2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.7;
+                    step01_2_the_zhulou2.style.top = 0.255 * height_window;
+                    // 三号竹篓的位置坐标
+                    step01_2_the_zhulou3.style.left = (width_window-step01_2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.75;
+                    step01_2_the_zhulou3.style.top = 0.45 * height_window;
+
+                    //放茶叶的定位
+                    var step01_2_the_fangchaye1 = document.getElementById('step01_2_the_fangchaye1');
+                    var step01_2_the_fangchaye2 = document.getElementById('step01_2_the_fangchaye2');
+                    step01_2_the_fangchaye1.style.height = 0.07 * height_window;
+                    step01_2_the_fangchaye2.style.height = 0.07 * height_window;
+                    // 一号放茶叶的位置坐标
+                    step01_2_the_fangchaye1.style.left = (width_window-step01_2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.5;
+                    step01_2_the_fangchaye1.style.top = 0.34 * height_window;
+                    step01_2_the_fangchaye1.style.transform = 'rotateZ(-8deg)';
+                    // 二号放茶叶的位置坐标
+                    step01_2_the_fangchaye2.style.left = (width_window-step01_2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.6;
+                    step01_2_the_fangchaye2.style.top = 0.415 * height_window;
+                    step01_2_the_fangchaye2.style.transform = 'rotateZ(-2deg)';
+
+                    //装好竹扁之后的架子定位（现在不显示）
+                    var step01_2_the_fangruzhubian = document.getElementById('step01_2_the_fangruzhubian');
+                    step01_2_the_fangruzhubian.style.height = 0.4 * height_window;
+                    step01_2_the_fangruzhubian.style.left = (width_window-step01_2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.12;
+                    step01_2_the_fangruzhubian.style.top = 0.16 * height_window;
+                    step01_2_the_fangruzhubian.style.display = 'none'
+                </script>
+            </div>
+
+
+            <script>
+                var step01_2_the_weifangzhubian = document.getElementById('step01_2_the_weifangzhubian');
+                step01_2_the_weifangzhubian.style.left = (width_window-step01_2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.12;
+                step01_2_the_weifangzhubian.style.top = 0.16 * height_window;
+                var step01_2_the_weifangzhubian_image = document.getElementById('step01_2_the_weifangzhubian_image');
+                step01_2_the_weifangzhubian_image.style.height = 0.4 * height_window;
+                step01_2_the_weifangzhubian.style.height = 0.4 * height_window;
+                step01_2_the_weifangzhubian.style.width = 0.23 * height_window;
+            </script>
+            <div class="dragbox">
+                <div class="draglist" title="刚铺满茶叶的竹扁" draggable="true" style="position: absolute; top: 100px; left: 400px;">
+                    <img src="../images/放茶叶.png" alt="" id="step01_2_the_fangchaye" style="z-index: 1; display: inline-block; position: fixed;">
+                </div>
+                <script>
+                    //装好茶叶的竹扁的位置
+                    var step01_2_the_fangchaye = document.getElementById('step01_2_the_fangchaye');
+                    step01_2_the_fangchaye.style.height = 0.07 * height_window;
+                    step01_2_the_fangchaye.style.left = (width_window-step01_2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.44;
+                    step01_2_the_fangchaye.style.top = 0.475 * height_window;
+
+                    step01_2_the_fangchaye.onmousedown = function(){
+                        naqichaye.load();
+                        naqichaye.play();
+                    }
+                </script>
+            </div>
+            <div class="dragremind"></div>
+            <div style="height: 300px; width: 300px; position:absolute; top:300px; left:600px; background-color: aquamarine; display: none;" id="get_it_window"></div>
+        <!-- <script assert="https://zz.bdstatic.com/linksubmit/push.js"></script><script assert="https://hm.baidu.com/hm.js?48d8e938d5365a4cb0fc9e65d945018e"></script><script type="text/javascript" async="" assert="https://ssl.google-analytics.com/ga.js"></script> -->
+        <script>
+
+        </script>
+        </div>
+        <div style="display: none;" id="step0002">
+            <div style="display: inline-block; position: absolute;" id="step2_text_before">
+                <p>第二步：杀青</p>
+                <p id="step2_steps01">将柴薪拖入柴洞。</p>
+                <p id="step2_steps02" style="display: none;">将另一根柴薪拖入柴洞。</p>
+                <a id="step2_text_after" style="display: none;" href="javascript:;" onclick="goto_third()">点火成功，杀青进行中，点击进行下一操作-></a>
+            </div>
+            <script>
+                var step2_text_before = document.getElementById('step2_text_before');
+                var step2_text_after = document.getElementById('step2_text_after');
+                step2_text_before.style.top = 0.4 * height_window;
+                step2_text_before.style.fontSize = 0.015 * width_window;
+                step2_text_after.style.top = 0.4 * height_window;
+                step2_text_after.style.right = 0;
+                step2_text_after.style.fontSize = 0.015 * width_window;
+                step2_text_after.style.display = 'none';
+
+                function goto_third(){
+                    document.getElementById('step0002').style.display = 'none';
+                    document.getElementById('step0003').style.display = '';
+                    step01_the_kongzhubian_image.style.display = 'none';
+                    fangruchaihuohou.pause();
+                }
+            </script>
+            <div style="display: inline-block;">
+                <img src="../images/宋体字幕/杀青揉捻字幕.png" alt="" id="step2_the_txt" style="z-index: 1000; display: inline-block; position: fixed;">
+                <img src="../images/step2/杀青1.png" alt="" id="step2_the_book" style="z-index: -999; display: inline-block; position: fixed;">
+                <img src="../images/step2/杀青2.png" alt="" id="step2_the_book_after" style="z-index: 999; display: inline-block; position: fixed; display: none;">
+                <img src="../images/step2/柴1.png" alt="" id="step2_the_chai1" style="z-index: 999; display: inline-block; position: fixed; display: none;">
+                <img src="../images/step2/柴2.png" alt="" id="step2_the_chai2" style="z-index: 999; display: inline-block; position: fixed; display: none;">
+                <script>
+                    //背景图
+                    var step2_step2_the_book = document.getElementById('step2_the_book');
+                    step2_the_book.style.height = height_window;
+                    step2_the_book.style.left = (width_window-step2_the_book.style.width)/3.15;
+                    var step2_the_book_after = document.getElementById('step2_the_book_after');
+                    step2_the_book_after.style.height = height_window;
+                    step2_the_book_after.style.left = (width_window-step2_the_book_after.style.width)/3.15;
+                    var step2_the_txt = document.getElementById('step2_the_txt');
+                    step2_the_txt.style.height = height_window * 0.29;
+                    step2_the_txt.style.left = (width_window-step2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.12;
+                    step2_the_txt.style.top = height_window * 0.62;
+                    //柴火的定位
+                    var step2_the_chai1 = document.getElementById('step2_the_chai1');
+                    var step2_the_chai2 = document.getElementById('step2_the_chai2');
+                    step2_the_chai1.style.height = 0.07 * height_window;
+                    step2_the_chai2.style.height = 0.06 * height_window;
+                    // 一号柴火的位置坐标
+                    step2_the_chai1.style.left = (width_window-step2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.24;
+                    step2_the_chai1.style.transform = 'rotateZ(15deg)';
+                    step2_the_chai1.style.top = 0.402 * height_window;
+                    // 二号柴火的位置坐标
+                    step2_the_chai2.style.left = (width_window-step2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.28;
+                    step2_the_chai2.style.top = 0.4015 * height_window;
+                </script>
+            </div>
+            <div class="dragbox">
+                <div class="draglist" draggable="true" style="position: absolute; top: 100px; left: 400px;">
+                    <img src="../images/step2/柴1.png" alt="" id="step2_the_chai1_before" style="z-index: 0; display: inline-block; position: fixed;">
+                <img src="../images/step2/柴2.png" alt="" id="step2_the_chai2_before" style="z-index: 0; display: inline-block; position: fixed;">
+                </div>
+                <script>
+                    //柴火的放置
+                    var step2_the_chai1_before = document.getElementById('step2_the_chai1_before');
+                    var step2_the_chai2_before = document.getElementById('step2_the_chai2_before');
+                    step2_the_chai1_before.style.height = 0.07 * height_window;
+                    step2_the_chai2_before.style.height = 0.06 * height_window;
+                    // 一号柴火的位置坐标
+                    step2_the_chai1_before.style.left = (width_window-step2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.18;
+                    step2_the_chai1_before.style.transform = 'rotateZ(90deg)';
+                    step2_the_chai1_before.style.top = 0.502 * height_window;
+                    // 二号柴火的位置坐标
+                    step2_the_chai2_before.style.left = (width_window-step2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.33;
+                    step2_the_chai2_before.style.transform = 'rotateZ(260deg)';
+                    step2_the_chai2_before.style.top = 0.5015 * height_window;
+                </script>
+            </div>
+            <div class="dragremind"></div>
+            <div style="height: 300px; width: 300px; position:absolute; top:300px; left:600px; background-color: aquamarine; display: none;" id="get_it_window"></div>
+        </div>
+        <div style="display: none;" id="step0003">
+            <div style="display: inline-block; position: absolute;" id="step3_text_before">
+                <p>第三步：闷黄</p>
+                <p id="step3_steps01">杀青后装入茶包进行闷黄。打开查看茶叶色泽。</p>
+                <p id="step3_steps02" style="display: none;">茶色泛绿，点击关闭茶包，继续闷黄。</p>
+                <p id="step3_steps03" style="display: none;">再次打开茶包，查看茶叶色泽。</p>
+                <a id="step3_steps04" style="display: none;" href="javascript:;" onclick="goto_forth()">茶根起黄，闷黄完成，点击进行下一操作-></a>
+            </div>
+            <script>
+                var step3_text_before = document.getElementById('step3_text_before');
+                var step3_text_after = document.getElementById('step3_text_after');
+                step3_text_before.style.top = 0.4 * height_window;
+                step3_text_before.style.fontSize = 0.015 * width_window;
+                step3_text_after.style.top = 0.4 * height_window;
+                step3_text_after.style.right = 0;
+                step3_text_after.style.fontSize = 0.015 * width_window;
+                step3_text_after.style.display = 'none';
+
+                function goto_forth(){
+                    document.getElementById('step0003').style.display = 'none';
+                    document.getElementById('step0004').style.display = '';
+                }
+            </script>
+            <div style="display: inline-block;">
+                <img src="../images/宋体字幕/闷黄字幕.png" alt="" style="z-index: 999; display: inline-block; position: fixed;" id="step3_the_txt">
+                <img src="../images/宋体字幕/复闷字幕.png" alt="" style="z-index: 999; display: inline-block; position: fixed; display: none;" id="step3_the_txt_after">
+                <img src="../images/step3/闷黄未打开.png" alt="" id="the_menhuang_before" style="z-index: -999; display: inline-block; position: fixed;">
+                <img src="../images/step3/闷黄打开1.png" alt="" id="the_menhuang_after1" style="z-index: -998; display: inline-block; position: fixed; display: none;">
+                <img src="../images/step3/闷黄打开2.png" alt="" id="the_menhuang_after2" style="z-index: -997; display: inline-block; position: fixed; display: none;">
+                <script>
+                    //背景图
+                    var the_menhuang_before = document.getElementById('the_menhuang_before');
+                    the_menhuang_before.style.height = height_window;
+                    the_menhuang_before.style.left = (width_window-the_menhuang_before.style.width)/3.15;
+                    var the_menhuang_after1 = document.getElementById('the_menhuang_after1');
+                    the_menhuang_after1.style.height = height_window;
+                    the_menhuang_after1.style.left = (width_window-the_menhuang_after1.style.width)/3.15;
+                    var the_menhuang_after2 = document.getElementById('the_menhuang_after2');
+                    the_menhuang_after2.style.height = height_window;
+                    the_menhuang_after2.style.left = (width_window-the_menhuang_after2.style.width)/3.15;
+
+                    var step3_the_txt = document.getElementById('step3_the_txt');
+                    step3_the_txt.style.height = height_window * 0.29;
+                    step3_the_txt.style.left = (width_window-the_menhuang_before.style.width)/3.15 + height_window / 4 * 3 * 0.12;
+                    step3_the_txt.style.top = height_window * 0.62;
+
+                    var step3_the_txt_after = document.getElementById('step3_the_txt_after');
+                    step3_the_txt_after.style.height = height_window * 0.29;
+                    step3_the_txt_after.style.left = (width_window-the_menhuang_before.style.width)/3.15 + height_window / 4 * 3 * 0.12;
+                    step3_the_txt_after.style.top = height_window * 0.62;
+                </script>
+            </div>
+            <div>
+                <a href="script:;">
+                    <div style="width: 100px; height: 100px; position: fixed; display: inline-block;" id="touch">
+                    </div>
+                </a>
+                <script>
+                    var touch = document.getElementById('touch');
+                    touch.style.top = 0.26 * height_window;
+                    touch.style.left = (width_window-the_menhuang_before.style.width)/3.15 + height_window / 4 * 3 * 0.38;
+                    touch.style.height = 0.095 * height_window;
+                    touch.style.width = 0.095 * height_window * 1.73;
+                </script>
+            </div>
+            <div class="dragremind"></div>
+            <script>
+                var touch_times = 0;
+                touch.onclick = function(){
+                    if(touch_times == 0)
+                    {
+                        the_menhuang_after1.style.display = '';
+                        the_menhuang_before.style.display = 'none';
+                        touch_times = 1;
+                        document.getElementById('step3_steps01').style.display = 'none';
+                        document.getElementById('step3_steps02').style.display = '';
+                        yezi_freesound.load();
+                        yezi_freesound.play();
+                    }
+                    else if(touch_times == 1)
+                    {
+                        the_menhuang_before.style.display = '';
+                        the_menhuang_after1.style.display = 'none';
+                        touch_times = 2;
+                        document.getElementById('step3_steps02').style.display = 'none';
+                        document.getElementById('step3_steps03').style.display = '';
+                        document.getElementById('step3_the_txt').style.display = 'none';
+                        document.getElementById('step3_the_txt_after').style.display = '';
+                        yezi_freesound.load();
+                        yezi_freesound.play();
+                    }
+                    else if(touch_times == 2)
+                    {
+                        the_menhuang_after2.style.display = '';
+                        the_menhuang_before.style.display = 'none';
+                        touch_times = 3;
+                        document.getElementById('step3_steps03').style.display = 'none';
+                        document.getElementById('step3_steps04').style.display = '';
+                        yezi_freesound.load();
+                        yezi_freesound.play();
+                    }
+                }
+            </script>
+        </div>
+        <div style="display: none;" id="step0004">
+            <div style="display: inline-block; position: absolute;" id="step4_text_before">
+                <p>第四步：烘培</p>
+                <p id="step4_steps01">闷黄完成后装入，点击箭头拌抹茶堆。</p>
+                <p id="step4_steps02" style="display: none;">茶堆呈中凸旁凹后，点击竹盖，起火烘焙。</p>
+                <a id="step4_text_after" style="display: none;" href="script:;" onclick="goto_fifth()">点击进行下一步-></a>
+            </div>
+            <script>
+                var step4_text_before = document.getElementById('step4_text_before');
+                var step4_text_after = document.getElementById('step4_text_after');
+                step4_text_before.style.top = 0.4 * height_window;
+                step4_text_before.style.fontSize = 0.015 * width_window;
+                step4_text_after.style.top = 0.4 * height_window;
+                step4_text_after.style.right = 0;
+                step4_text_after.style.fontSize = 0.015 * width_window;
+                step4_text_after.style.display = 'none';
+
+                function goto_fifth(){
+                    time_step=300;
+                    document.getElementById('step0004').style.display = 'none';
+                    document.getElementById('step0005').style.display = '';
+                    step01_the_kongzhubian_image.style.display = '';
+                    step01_the_kongzhubian_image.src = '../images/step5/干燥空筐.png';
+
+                    step01_the_kongzhubian_image.style.left = (width_window-step01_2_the_book.style.width)/3.15 + height_window / 4 * 3 * 0.43;
+                    step01_the_kongzhubian_image.style.top = 0.4 * height_window;
+
+                    step01_the_kongzhubian_image.style.height = 0.182 * height_window;
+                }
+            </script>
+            <div style="display: inline-block;">
+                <img src="../images/step4/烘焙1.png" alt="" id="the_hongbei_before1" style="z-index: -999; display: inline-block; position: fixed;">
+                <img src="../images/step4/烘焙2.png" alt="" id="the_hongbei_before2" style="z-index: -998; display: inline-block; position: fixed; display: none;">
+                <img src="../images/step4/烘焙关盖.png" alt="" id="the_hongbei_after" style="z-index: -997; display: inline-block; position: fixed; display: none;">
+                <img src="../images/step4/箭头.png" alt="" id="the_jiantou" style="z-index: -996; display: inline-block; position: fixed;">
+                <img src="../images/宋体字幕/烘焙字幕.png" alt="" style="z-index: 999; display: inline-block; position: fixed;" id="step4_the_txt">
+                <script>
+                    //背景图
+                    var the_hongbei_before1 = document.getElementById('the_hongbei_before1');
+                    the_hongbei_before1.style.height = height_window;
+                    the_hongbei_before1.style.left = width_window / 2 - height_window / 2020 * 1540 / 2;
+                    var the_hongbei_before2 = document.getElementById('the_hongbei_before2');
+                    the_hongbei_before2.style.height = height_window;
+                    the_hongbei_before2.style.left = width_window / 2 - height_window / 2020 * 1540 / 2;
+                    var the_hongbei_after = document.getElementById('the_hongbei_after');
+                    the_hongbei_after.style.height = height_window;
+                    the_hongbei_after.style.left = width_window / 2 - height_window / 2020 * 1540 / 2;
+                    var the_jiantou = document.getElementById('the_jiantou');
+                    the_jiantou.style.height = 0.03 * height_window;
+                    the_jiantou.style.left = width_window / 2 - height_window / 2020 * 1540 / 2 + height_window / 4 * 3 * 0.38;
+                    the_jiantou.style.top = 0.17 * height_window;
+
+                    var step4_the_txt = document.getElementById('step4_the_txt');
+                    step4_the_txt.style.height = height_window * 0.29;
+                    step4_the_txt.style.left = width_window / 2 - height_window / 2020 * 1540 / 2 + height_window / 4 * 3 * 0.12;
+                    step4_the_txt.style.top = height_window * 0.62;
+                </script>
+            </div>
+            <div>
+                <a href="script:;">
+                    <div style="width: 100px; height: 100px; position: fixed; display: inline-block;" id="step4_touch">
+                    </div>
+                </a>
+                <script>
+                    var step4_touch = document.getElementById('step4_touch');
+                    step4_touch.style.top = 0.17 * height_window;
+                    step4_touch.style.left = width_window / 2 - height_window / 2020 * 1540 / 2 + height_window / 4 * 3 * 0.38;
+                    step4_touch.style.height = 0.03 * height_window;
+                    step4_touch.style.width = 0.03 * height_window / 50 * 290;
+                </script>
+            </div>
+            <div class="dragremind"></div>
+            <script>
+                var touch_times_s = 0;
+                step4_touch.onclick = function(){
+                    if(touch_times_s == 0)
+                    {
+
+                        the_hongbei_before2.style.display = '';
+                        the_hongbei_before1.style.display = 'none';
+                        touch_times_s = 1;
+                        step4_touch.style.top = 0.275 * height_window;
+                        step4_touch.style.left = width_window / 2 - height_window / 2020 * 1540 / 2 + height_window / 4 * 3 * 0.62;
+                        step4_touch.style.height = 0.225 * height_window;
+                        step4_touch.style.width = 0.225 * height_window / 4 * 3;
+                        document.getElementById('step4_steps01').style.display = 'none';
+                        document.getElementById('step4_steps02').style.display = '';
+                        fangxiachaye.load();
+                        fangxiachaye.play();
+                    }
+                    else if(touch_times_s == 1)
+                    {
+                        the_hongbei_after.style.display = '';
+                        the_hongbei_before2.style.display = 'none';
+                        touch_times_s = 2;
+                        document.getElementById('step4_steps02').style.display = 'none';
+                        document.getElementById('step4_text_after').style.display = '';
+                        menghuangdakaibaoguo.load();
+                        menghuangdakaibaoguo.play();
+                    }
+                }
+            </script>
+        </div>
+        <div style="display: none;" id="step0005">
+            <div style="display: inline-block; position: absolute;" id="step5_text_before">
+                <p>第五步：干燥</p>
+                <p id="step5_steps01">从竹篮中取出茶叶，放入空筐中。</p>
+                <p id="step5_steps02" style="display: none;">将放入茶叶的竹筐置于高台上自然干燥。</p>
+                <a id="step5_steps03" style="display: none;" href="script:;" onclick="goto_sixth()">放置成功，点击进行下一操作-></a>
+            </div>
+            <script>
+                var step5_text_before = document.getElementById('step5_text_before');
+                var step5_text_after = document.getElementById('step5_text_after');
+                step5_text_before.style.top = 0.4 * height_window;
+                step5_text_before.style.fontSize = 0.015 * width_window;
+                step5_text_after.style.top = 0.4 * height_window;
+                step5_text_after.style.right = 0;
+                step5_text_after.style.fontSize = 0.015 * width_window;
+                step5_text_after.style.display = 'none';
+
+                function goto_sixth(){
+                    document.getElementById('step0005').style.display = 'none';
+                    document.getElementById('step0006').style.display = '';
+                }
+            </script>
+            <div style="display: inline-block;">
+                <img src="../images/step5/干燥1.png" alt="" id="the_ganzao_before" style="z-index: -999; display: inline-block; position: fixed;">
+                <img src="../images/step5/干燥2.png" alt="" id="the_ganzao_after" style="z-index: -998; display: inline-block; position: fixed; display: none;">
+                <img src="../images/宋体字幕/干燥字幕.png" alt="" style="z-index: 999; display: inline-block; position: fixed;" id="step5_the_txt">
+                <script>
+                    //背景图
+                    var the_ganzao_before = document.getElementById('the_ganzao_before');
+                    the_ganzao_before.style.height = height_window;
+                    the_ganzao_before.style.left = (width_window-the_ganzao_before.style.width)/3.15;
+                    var the_ganzao_after = document.getElementById('the_ganzao_after');
+                    the_ganzao_after.style.height = height_window;
+                    the_ganzao_after.style.left = (width_window-the_ganzao_after.style.width)/3.15;
+
+                    var step5_the_txt = document.getElementById('step5_the_txt');
+                    step5_the_txt.style.height = height_window * 0.29;
+                    step5_the_txt.style.left = (width_window-the_ganzao_before.style.width)/3.15 + height_window / 4 * 3 * 0.12;
+                    step5_the_txt.style.top = height_window * 0.62;
+                </script>
+            </div>
+
+            <div class="dustbin" style="position: absolute;" id="the_kongkuang">
+                <img src="../images/step5/干燥空筐.png" title="空竹扁" alt="" style="z-index: -1; display: inline-block; position: fixed;" id="the_kongkuang_image">
+            </div>
+            <script>
+                var the_kongkuang = document.getElementById('the_kongkuang');
+                the_kongkuang.style.left = (width_window-the_ganzao_before.style.width)/3.15 + height_window / 4 * 3 * 0.43;
+                the_kongkuang.style.top = 0.4 * height_window;
+                var the_kongkuang_image = document.getElementById('the_kongkuang_image');
+                the_kongkuang_image.style.height = 0.182 * height_window;
+                the_kongkuang.style.height = 0.182 * height_window;
+                the_kongkuang.style.width = 0.182 * height_window * 0.793;
+            </script>
+            <div class="dragbox">
+                <div class="draglist" draggable="true" style="position: absolute; top: 100px; left: 400px;">
+                    <img src="../images/step5/干燥一堆茶叶.png" alt="" id="the_ganzaochaye" style="z-index: 1; display: inline-block; position: fixed;">
+                    <img src="../images/step5/干燥实筐.png" alt="" id="the_ganzaoshikuang" style="z-index: 1; display: inline-block; position: fixed; display: none;">
+                </div>
+                <script>
+                    //茶叶的放置
+                    var the_ganzaochaye = document.getElementById('the_ganzaochaye');
+                    var the_ganzaoshikuang = document.getElementById('the_ganzaoshikuang');
+                    the_ganzaochaye.style.height = 0.087 * height_window;
+                    the_ganzaoshikuang.style.height = 0.182 * height_window;
+                    // 一、二、三号茶叶的位置坐标
+                    the_ganzaochaye.style.left = (width_window-the_ganzao_before.style.width)/3.15 + height_window / 4 * 3 * 0.68;
+                    the_ganzaochaye.style.top = 0.32 * height_window;
+                    the_ganzaoshikuang.style.left = (width_window-the_ganzao_before.style.width)/3.15 + height_window / 4 * 3 * 0.43;
+                    the_ganzaoshikuang.style.top = 0.4 * height_window;
+
+                    the_ganzaochaye.onmousedown = function(){
+                        naqichaye.load();
+                        naqichaye.play();
+                    }
+                </script>
+            </div>
+            <div class="dragremind"></div>
+            <div style="height: 300px; width: 300px; position:absolute; top:300px; left:600px; background-color: aquamarine; display: none;" id="get_it_window"></div>
+        </div>
+        <div style="display: none;" id="step0006">
+            <div style="display: inline-block; position: absolute;" id="step6_text_before">
+                <p>第六步：成茶</p>
+                <p id="step6_steps01">将干燥后的茶叶平铺，去除其中的杂质</p>
+                <p id="step6_steps02"></p>
+                <p id="step6_text_after" style="display: none;">完成！</p>
+            </div>
+            <script>
+                var height_window = window.innerHeight;
+                var width_window = window.innerWidth;
+                var step6_text_before = document.getElementById('step6_text_before');
+                var step6_text_after = document.getElementById('step6_text_after');
+                step6_text_before.style.top = 0.4 * height_window;
+                step6_text_before.style.fontSize = 0.015 * width_window;
+                step6_text_after.style.top = 0.4 * height_window;
+                step6_text_after.style.right = 0;
+                step6_text_after.style.fontSize = 0.015 * width_window;
+                step6_text_after.style.display = 'none';
+            </script>
+            <div style="display: inline-block;">
+                <img src="../images/step6/成茶.png" alt="" id="the_chengcha01" style="z-index: -999; display: inline-block; position: fixed;">
+                <img src="../images/step6/成茶2.png" alt="" id="the_chengcha02_2" style="z-index: -997; display: inline-block; position: fixed; ">
+                <img src="../images/step6/成茶3.png" alt="" id="the_chengcha02_1" style="z-index: -998; display: inline-block; position: fixed;">
+                <img src="../images/宋体字幕/成茶字幕.png" alt="" style="z-index: 999; display: inline-block; position: fixed;" id="step6_the_txt">
+                <script>
+                    //背景图
+                    var the_chengcha01 = document.getElementById('the_chengcha01');
+                    the_chengcha01.style.height = height_window;
+                    the_chengcha01.style.left = (width_window-the_chengcha01.style.width)/3.15;
+                    var the_chengcha02_2 = document.getElementById('the_chengcha02_2');
+                    the_chengcha02_2.style.height = 0.4 * height_window;
+                    the_chengcha02_2.style.top = 0.16 * height_window;
+                    the_chengcha02_2.style.left = (width_window-the_chengcha01.style.width)/3.15 + height_window / 4 * 3 * 0.22;
+                    var the_chengcha02_1 = document.getElementById('the_chengcha02_1');
+                    the_chengcha02_1.style.height = height_window;
+                    the_chengcha02_1.style.left = (width_window-the_chengcha02_1.style.width)/3.15;
+
+                    var step6_the_txt = document.getElementById('step6_the_txt');
+                    step6_the_txt.style.height = height_window * 0.29;
+                    step6_the_txt.style.left = (width_window-the_chengcha01.style.width)/3.15 + height_window / 4 * 3 * 0.12;
+                    step6_the_txt.style.top = height_window * 0.62;
+                </script>
+            </div>
+            <div>
+                <a href="script:;">
+                    <img src="../images/step6/杂1.png" alt="" style="display: inline-block; position: fixed;" id="touch1">
+                </a>
+                <a href="script:;">
+                    <img src="../images/step6/杂2.png" alt="" style="display: inline-block; position: fixed;" id="touch2">
+                </a>
+                <a href="script:;">
+                    <img src="../images/step6/杂3.png" alt="" style="display: inline-block; position: fixed;" id="touch3">
+                </a>
+                <a href="script:;">
+                    <img src="../images/step6/杂4.png" alt="" style="display: inline-block; position: fixed;" id="touch4">
+                </a>
+                <a href="script:;">
+                    <img src="../images/step6/杂5.png" alt="" style="display: inline-block; position: fixed;" id="touch5">
+                </a>
+                <a href="script:;">
+                    <img src="../images/step6/杂6.png" alt="" style="display: inline-block; position: fixed;" id="touch6">
+                </a>
+                <script>
+                    var touch1 = document.getElementById('touch1');
+                    touch1.style.top = 0.26 * height_window;
+                    touch1.style.left = (width_window-the_chengcha01.style.width)/3.15 + height_window / 4 * 3 * 0.4;
+                    touch1.style.height = 0.025 * height_window;
+                    var touch2 = document.getElementById('touch2');
+                    touch2.style.top = 0.35 * height_window;
+                    touch2.style.left = (width_window-the_chengcha01.style.width)/3.15 + height_window / 4 * 3 * 0.38;
+                    touch2.style.height = 0.015 * height_window;
+                    var touch3 = document.getElementById('touch3');
+                    touch3.style.top = 0.46 * height_window;
+                    touch3.style.left = (width_window-the_chengcha01.style.width)/3.15 + height_window / 4 * 3 * 0.5;
+                    touch3.style.height = 0.015 * height_window;
+                    var touch4 = document.getElementById('touch4');
+                    touch4.style.top = 0.4 * height_window;
+                    touch4.style.left = (width_window-the_chengcha01.style.width)/3.15 + height_window / 4 * 3 * 0.48;
+                    touch4.style.height = 0.015 * height_window;
+                    var touch5 = document.getElementById('touch5');
+                    touch5.style.top = 0.3 * height_window;
+                    touch5.style.left = (width_window-the_chengcha01.style.width)/3.15 + height_window / 4 * 3 * 0.6;
+                    touch5.style.height = 0.02 * height_window;
+                    var touch6 = document.getElementById('touch6');
+                    touch6.style.top = 0.4 * height_window;
+                    touch6.style.left = (width_window-the_chengcha01.style.width)/3.15 + height_window / 4 * 3 * 0.3;
+                    touch6.style.height = 0.02 * height_window;
+                </script>
+            </div>
+            <div class="dragremind"></div>
+            <script>
+                var touch_times_ss = 0;
+                document.getElementById('step6_steps02').innerHTML = '去除杂质（' + touch_times + '/6）';
+                touch1.onclick = function()
+                {
+                    fangxiachaye.load();
+                    fangxiachaye.play();
+                    touch1.style.display = 'none';
+                    touch_times_ss++;
+                    document.getElementById('step6_steps02').innerHTML = '去除杂质（' + touch_times_ss + '/6）';
+                    if(touch_times_ss==6)document.getElementById('step6_text_after').style.display = '';
+                }
+                touch2.onclick = function()
+                {
+                    fangxiachaye.load();
+                    fangxiachaye.play();
+                    touch2.style.display = 'none';
+                    touch_times_ss++;
+                    document.getElementById('step6_steps02').innerHTML = '去除杂质（' + touch_times_ss + '/6）';
+                    if(touch_times_ss==6)document.getElementById('step6_text_after').style.display = '';
+                }
+                touch3.onclick = function()
+                {
+                    fangxiachaye.load();
+                    fangxiachaye.play();
+                    touch3.style.display = 'none';
+                    touch_times_ss++;
+                    document.getElementById('step6_steps02').innerHTML = '去除杂质（' + touch_times_ss + '/6）';
+                    if(touch_times_ss==6)document.getElementById('step6_text_after').style.display = '';
+                }
+                touch4.onclick = function()
+                {
+                    fangxiachaye.load();
+                    fangxiachaye.play();
+                    touch4.style.display = 'none';
+                    touch_times_ss++;
+                    document.getElementById('step6_steps02').innerHTML = '去除杂质（' + touch_times_ss + '/6）';
+                    if(touch_times_ss==6)document.getElementById('step6_text_after').style.display = '';
+                }
+                touch5.onclick = function()
+                {
+                    fangxiachaye.load();
+                    fangxiachaye.play();
+                    touch5.style.display = 'none';
+                    touch_times_ss++;
+                    document.getElementById('step6_steps02').innerHTML = '去除杂质（' + touch_times_ss + '/6）';
+                    if(touch_times_ss==6)document.getElementById('step6_text_after').style.display = '';
+                }
+                touch6.onclick = function()
+                {
+                    fangxiachaye.load();
+                    fangxiachaye.play();
+                    touch6.style.display = 'none';
+                    touch_times_ss++;
+                    document.getElementById('step6_steps02').innerHTML = '去除杂质（' + touch_times_ss + '/6）';
+                    if(touch_times_ss==6)document.getElementById('step6_text_after').style.display = '';
+                }
+            </script>
+        </div>
+    </body>
+    </html>

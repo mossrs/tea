@@ -1,0 +1,1203 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>平阳黄汤茶</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        #button {
+            /* width: 50px;
+            height: 40px; */
+            position: absolute;
+            z-index: 99999;
+            /* left: 30%; */
+            background: url("images/点击阅读按钮.gif") no-repeat;
+            border-style: none;
+        }
+
+        #book {
+            width: 600px;
+            height: 800px;
+            position: absolute;
+            /* border: 1px solid black; */
+            /* 第一个封面 */
+            background: url(images/0.jpg);
+        }
+
+        #rightPage {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            z-index: -8;
+            transition: 0.5s;
+            transform: perspective(800px) rotateY(0px);
+            transform-origin: right center;
+            background: #e0d1b4;
+            transform-style: preserve-3d;
+        }
+
+        #rightPage #topNode {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            /* 第一个封面 */
+            transform: translateZ(1px);
+        }
+
+        #rightPage #bottomNode {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            /* 第三个封面 */
+            /*scaleX将翻书镜像后的图像还原镜像*/
+            transform: translateZ(-1px) scaleX(-1);
+        }
+
+        #rightOtherPage {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            /* 第三个封面 */
+            z-index: -9;
+        }
+
+        #book_ground {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            z-index: -10;
+        }
+
+        .dustbin {
+            width: 100px;
+            height: 100px;
+        }
+
+        .dragbox {
+            width: 100px;
+            height: 100px;
+        }
+
+        .draglist {
+            width: auto;
+            height: auto;
+            cursor: move;
+            background-color: rgb(0, 0, 0, 0);
+        }
+
+        /* .draglist:hover{border-color:#cad5eb; background-color:#f0f3f9;} */
+        .dragremind {
+            padding-top: 2em;
+            clear: both;
+        }
+    </style>
+</head>
+
+<body style="background-image:url('images/背景.png');background-size: 50%;">
+<div style="z-index: 99999; background-color: rgb(0, 0, 0, 0.5); display: inline-block; position: fixed;text-align: center;display: none;"
+     id="load_background">
+    <img src="images/提示/摊青.png" alt="" style="z-index: 99999;" id="load_picture">
+</div>
+
+<audio src="musics/背景音乐.mp3" id="beijinyingyue"></audio>
+<audio src="musics/拿起茶叶.mp3" id="naqichaye"></audio>
+<audio src="musics/放下茶叶.mp3" id="fangxiachaye"></audio>
+<audio src="musics/闷黄打开包裹.mp3" id="menghuangdakaibaoguo"></audio>
+<audio src="musics/杀青放入柴火后.mp3" id="fangruchaihuohou" loop></audio>
+<audio src="musics/叶子_Freesound.mp3" id="yezi_freesound"></audio>
+
+<input type='button' value='' id='button' style="background-color: rgb(0, 0, 0, 0.5);">
+
+<div id='book' style="z-index: -10;">
+    <img src="images/1.png" alt="" id="book_ground">
+    <div id='rightPage'>
+        <img src="images/0.png" alt="" id='topNode'>
+        <img src="images/6.png" alt="" id='bottomNode'>
+    </div>
+    <div id='rightOtherPage'></div>
+    <!-- 拖拽目的地 -->
+    <div class="dustbin" style="position: absolute;" id="step01_the_kongzhubian">
+        <img src="images/空竹扁.png" alt="" style="z-index: 999; display: inline-block; position: absolute;opacity: 0;"
+             id="step01_the_kongzhubian_image">
+    </div>
+    <!-- js全局变量统一声明————声音————宽高 -->
+    <script>
+        var time_step = 0//第几次拖拽
+        var step01_the_kongzhubian = document.getElementById('step01_the_kongzhubian')
+        var step01_the_kongzhubian_image = document.getElementById('step01_the_kongzhubian_image')//拖拽目的地
+        var naqichaye = document.getElementById('naqichaye')
+        var fangxiachaye = document.getElementById('fangxiachaye')
+        var menghuangdakaibaoguo = document.getElementById('menghuangdakaibaoguo')
+        var fangruchaihuohou = document.getElementById('fangruchaihuohou')
+        var yezi_freesound = document.getElementById('yezi_freesound')
+        var beijinyingyue = document.getElementById('beijinyingyue')
+        var height_window = window.innerHeight;
+        var width_window = window.innerWidth;
+        var load_background = document.getElementById('load_background')
+        var load_picture = document.getElementById('load_picture')
+
+        load_background.style.height = height_window + 'px'
+        load_background.style.width = width_window + 'px'
+
+        book = document.getElementById('book')
+        if (height_window < width_window) {
+            book.style.height = height_window + 'px';
+            book.style.width = height_window * 3 / 4.3 + 'px';
+            book.style.left = (width_window - height_window * 3 / 4.3) / 2 + 'px';
+            var page_width = height_window * 3 / 4.3;
+        } else {
+            book.style.width = width_window + 'px';
+            book.style.height = width_window * 4.3 / 3 + 'px';
+            book.style.top = (height_window - width_window * 4.3 / 3) / 2 + 'px';
+            var page_height = width_window * 4.3 / 3;
+        }
+        load_picture.style.width = 0.3 * width_window + 'px'
+        load_picture.style.marginTop = 0.3 * height_window + 'px'
+
+        function showTheLoading_out() {
+            if (index != 2) {
+                setTimeout(function () {
+                    showTheLoading();
+                }, 700);
+            } else {
+                setTimeout(function () {
+                    showTheLoading();
+                }, 2500);
+            }
+        }
+
+        function showTheLoading() {
+            load_background.style.display = ''
+            button.style.display = ''
+        }
+    </script>
+
+    <!-- js翻页算法 -->
+    <script type="text/javascript">
+
+        var index = 0;
+        var flag = false;
+
+        button.style.height = page_width / 3 * 0.32 + 'px'
+        button.style.width = page_width / 3 + 'px'
+        button.style.top = height_window * 0.7 + 'px'
+        button.style.left = page_width * 0.3 + width_window / 2 - page_width / 2 + 'px'
+        // button.style.opacity = 0
+        button.style.backgroundSize = page_width / 3 + 'px ' + page_width / 3 * 0.32 + 'px'
+
+        button.onclick = function () {
+            if (index >= 1) document.getElementById('step' + index).style.display = 'none'
+            if (flag) {
+                return
+            }
+            ;
+            flag = true;
+            index++;
+            if (index >= 1) {
+                button.style.opacity = 0
+                button.style.display = 'none'
+                load_background.style.display = 'none'
+                button.style.top = height_window * 0.3 + 0.3 * width_window * 0.632 * 0.776 + 'px'
+                button.style.left = page_width * 0.5 - page_width / 6 + page_width / 22 + width_window / 2 - page_width / 2 + 'px'
+            }
+            rightPage.style.transition = '0.5s';
+            rightPage.style.transform = 'perspective(800px) rotateY(180deg)';
+            step01_the_kongzhubian_image.style.opacity = 0;
+            setTimeout(function () {
+                // 翻页后瞬间更换下一页的背景
+                book_ground.src = 'images/' + (index + 1) + '.png';
+                // 让翻页瞬间回去
+                rightPage.style.transition = '0s';
+                rightPage.style.transform = 'perspective(800px) rotateY(0deg)';
+
+                // 更换翻页纸正面背景
+                topNode.src = 'images/' + (index) + '.png';
+                // 更换翻页纸背面背景
+                // bottomNode.style.background = 'blue'
+
+                // 更换翻页后的纸背景
+                rightOtherPage.src = 'images/' + (index + 1) + '.png';
+
+                flag = false;
+                document.getElementById('step' + index).style.display = '';
+                step01_the_kongzhubian_image.style.opacity = 1;
+                if (index == 3 || index == 4) {
+                    fangruchaihuohou.pause();
+                    step01_the_kongzhubian_image.style.opacity = 0
+                }
+                if (index == 6 || index == 7) {
+                    step01_the_kongzhubian_image.style.display = 'none'
+                }
+                if (index == 7) {
+                    step7_show();
+                }
+                console.log(index)
+            }, 500);
+
+            if (index == 1) {
+                show_txt_gif_to_png(7100, 1)
+            } else if (index == 2) {
+                show_txt_gif_to_png(7100, 2)
+            } else if (index == 3) {
+                show_txt_gif_to_png(7100, 3)
+            } else if (index == 4) {
+                show_txt_gif_to_png(7100, 4)
+            } else if (index == 5) {
+                show_txt_gif_to_png(6200, 5)
+            } else if (index == 6) {
+                show_txt_gif_to_png(2100, 6)
+            }
+        };
+    </script>
+
+    <!-- 第一步的元素 -->
+    <div id="step1" style="display: none;">
+        <script>
+            var beijinyingyue = document.getElementById('beijinyingyue');
+            onmousemove = function () {
+                beijinyingyue.volume = 0.1;
+                beijinyingyue.play();
+            }
+        </script>
+        <img src="images/step1/摊青.gif" id="step1_txt" style="z-index: 0; display: inline-block; position: absolute;">
+        <img src="images/字幕/摊青.png" id="step1_txt_png"
+             style="z-index: 0; display: inline-block; position: absolute;display: none;">
+        <!-- js定位文字图片的位置 -->
+        <script>
+            var step1_txt = document.getElementById('step1_txt')
+            var step1_txt_png = document.getElementById('step1_txt_png')
+            if (width_window < height_window) {
+                //下方文字————定位————大小
+                step1_txt.style.height = page_height * 0.27 + 'px';
+                step1_txt.style.top = page_height * 0.62 + 'px';
+                step1_txt.style.left = width_window * 0.12 + 'px';
+            } else {
+                //下方文字————定位————大小
+                step1_txt.style.height = height_window * 0.5 + 'px';
+                step1_txt.style.top = height_window * 0.5 + 'px';
+                step1_txt.style.right = -page_width * 0.23 + 'px';
+
+                step1_txt_png.style.height = height_window * 0.27 + 'px';
+                step1_txt_png.style.top = height_window * 0.615 + 'px';
+                step1_txt_png.style.right = page_width * 0.102 + 'px';
+            }
+        </script>
+
+        <!-- 第一部中可以拖动的元素 -->
+        <div class="dragbox" style="display: inline-block; position: absolute;">
+            <div class="draglist" draggable="true" style="position: absolute;">
+                <!-- <img assert="images/一堆茶叶.png" alt="" id="step01_the_chaye1" style="z-index: 1; display: inline-block; position: absolute;"> -->
+                <img src="images/一堆茶叶.png" alt="" id="step01_the_chaye2"
+                     style="z-index: 1; display: inline-block; position: absolute;">
+                <!-- <img assert="images/一堆茶叶.png" alt="" id="step01_the_chaye3" style="z-index: 1; display: inline-block; position: absolute;"> -->
+                <img src="images/放茶叶.png" alt="" id="step01_the_fangchaye1"
+                     style="z-index: 1; display: inline-block; position: absolute;">
+                <img src="images/放入竹扁.png" alt="" id="weifang"
+                     style="z-index: 1; display: inline-block; position: absolute;display: none;">
+            </div>
+            <!-- js三堆可移动茶叶的位置以及点触音效 -->
+            <script>
+                // var step01_the_chaye1 = document.getElementById('step01_the_chaye1');
+                var step01_the_chaye2 = document.getElementById('step01_the_chaye2');
+                // var step01_the_chaye3 = document.getElementById('step01_the_chaye3');
+                var step01_the_fangchaye1 = document.getElementById('step01_the_fangchaye1');
+                var weifang = document.getElementById('weifang');
+                // step01_the_chaye1.style.height = 0.06 * height_window + 'px';
+                step01_the_chaye2.style.height = 0.1 * height_window + 'px';
+                // step01_the_chaye3.style.height = 0.06 * height_window + 'px';
+                step01_the_fangchaye1.style.left = page_width * 0.45 + 'px';
+                step01_the_fangchaye1.style.top = height_window * 0.45 + 'px';
+                step01_the_fangchaye1.style.height = height_window * 0.07 + 'px';
+                if (width_window > height_window) {
+                    // step01_the_chaye1.style.left = page_width * 0.62 + 'px';
+                    // step01_the_chaye1.style.top = height_window * 0.22 + 'px';
+                    step01_the_chaye2.style.left = page_width * 0.65 + 'px';
+                    step01_the_chaye2.style.top = height_window * 0.26 + 'px';
+                    // step01_the_chaye3.style.left = page_width * 0.74 + 'px';
+                    // step01_the_chaye3.style.top = height_window * 0.42 + 'px';
+                    weifang.style.left = page_width * 0.15 + 'px';
+                    weifang.style.top = height_window * 0.16 + 'px';
+                    weifang.style.height = height_window * 0.4 + 'px';
+                    weifang.style.width = height_window * 0.21 + 'px';
+                    //拖拽目的地————定位————大小
+                    step01_the_kongzhubian_image.style.left = page_width * 0.45 + 'px';
+                    step01_the_kongzhubian_image.style.top = height_window * 0.45 + 'px';
+                    step01_the_kongzhubian_image.style.height = height_window * 0.07 + 'px';
+
+                } else {
+                    step01_the_chaye1.style.left = width_window * 0.62 + 'px';
+                    step01_the_chaye1.style.top = height_window * 0.22 + 'px';
+                    step01_the_chaye2.style.left = page_width * 0.7 + 'px';
+                    step01_the_chaye2.style.top = height_window * 0.26 + 'px';
+                    step01_the_chaye3.style.left = page_width * 0.74 + 'px';
+                    step01_the_chaye3.style.top = height_window * 0.42 + 'px';
+
+                    //拖拽目的地————定位————大小
+                    step01_the_kongzhubian_image.style.left = page_width * 0.45 + 'px';
+                    step01_the_kongzhubian_image.style.top = height_window * 0.45 + 'px';
+                    step01_the_kongzhubian_image.style.height = height_window * 0.07 + 'px';
+                }
+
+                step01_the_chaye1.onmousedown = function () {
+                    naqichaye.load();
+                    naqichaye.play();
+                }
+                step01_the_chaye2.onmousedown = function () {
+                    naqichaye.load();
+                    naqichaye.play();
+                }
+                step01_the_chaye3.onmousedown = function () {
+                    naqichaye.load();
+                    naqichaye.play();
+                }
+
+                step01_the_fangchaye1.onmousedown = function () {
+                    naqichaye.load();
+                    naqichaye.play();
+                }
+            </script>
+        </div>
+
+        <div class="dragremind"></div>
+        <div style="height: 300px; width: 300px; position:absolute; top:300px; left:600px; background-color: aquamarine; display: none;"
+             id="get_it_window"></div>
+    </div>
+    <div id="step2" style="display: none;">
+        <img src="images/step2/杀青揉捻.gif" id="step2_txt" style="z-index: 2; display: inline-block; position: absolute;">
+        <img src="images/字幕/杀青揉捻字幕.png" id="step2_txt_png"
+             style="z-index: 2; display: inline-block; position: absolute;display: none;">
+        <img src="images/step2/杀青2.png" alt="" id="fire_after"
+             style="z-index: 1; display: inline-block; position: fixed;display: none;">
+        <div class="dragbox" style="display: inline-block; position: absolute;">
+            <div class="draglist" draggable="true" style="position: absolute;">
+                <img src="images/step2/柴1.png" alt="" id="fire_chai01"
+                     style="z-index: 1000; display: inline-block; position: absolute;display: none;">
+                <img src="images/step2/柴2.png" alt="" id="fire_chai02"
+                     style="z-index: 1000; display: inline-block; position: absolute;display: none;">
+                <img src="images/step2/柴1.png" alt="" id="fire_chai01_start"
+                     style="z-index: 3; display: inline-block; position: absolute;">
+                <img src="images/step2/柴2.png" alt="" id="fire_chai02_start"
+                     style="z-index: 3; display: inline-block; position: absolute;">
+            </div>
+            <script>
+                var step2_txt = document.getElementById('step2_txt')
+                var fire_after = document.getElementById('fire_after')
+                var fire_chai01 = document.getElementById('fire_chai01')
+                var fire_chai02 = document.getElementById('fire_chai02')
+                var fire_chai01_start = document.getElementById('fire_chai01_start')
+                var fire_chai02_start = document.getElementById('fire_chai02_start')
+
+                if (width_window > height_window) {
+                    fire_after.style.height = height_window + 'px'
+                    fire_after.style.left = (width_window - height_window * 3 / 4.3) / 2 + 'px';
+                    fire_after.style.width = height_window * 3 / 4.3 + 'px';
+                    //下方文字————定位————大小
+                    step2_txt.style.height = height_window * 0.5 + 'px';
+                    step2_txt.style.top = height_window * 0.5 + 'px';
+                    step2_txt.style.right = -page_width * 0.15 + 'px';
+
+                    step2_txt_png.style.height = height_window * 0.27 + 'px';
+                    step2_txt_png.style.top = height_window * 0.615 + 'px';
+                    step2_txt_png.style.right = page_width * 0.094 + 'px';
+
+                    fire_chai01.style.height = 0.07 * height_window + 'px';
+                    fire_chai02.style.height = 0.06 * height_window + 'px';
+                    fire_chai01_start.style.height = 0.07 * height_window + 'px';
+                    fire_chai02_start.style.height = 0.06 * height_window + 'px';
+
+                    fire_chai01.style.top = 0.39 * height_window + 'px';
+                    fire_chai01.style.transform = 'rotateZ(15deg)';
+                    fire_chai01.style.left = 0.24 * page_width + 'px';
+                    fire_chai02.style.top = 0.39 * height_window + 'px';
+                    fire_chai02.style.left = 0.28 * page_width + 'px';
+
+                    fire_chai01_start.style.left = page_width * 0.18 + 'px';
+                    fire_chai01_start.style.transform = 'rotateZ(90deg)';
+                    fire_chai01_start.style.top = 0.502 * height_window + 'px';
+                    fire_chai02_start.style.left = page_width * 0.33 + 'px';
+                    fire_chai02_start.style.transform = 'rotateZ(260deg)';
+                    fire_chai02_start.style.top = 0.5015 * height_window + 'px';
+                } else {
+                    //下方文字————定位————大小
+                    step2_txt.style.height = page_height * 0.27 + 'px';
+                    step2_txt.style.top = page_height * 0.62 + 'px';
+                    step2_txt.style.left = width_window * 0.12 + 'px';
+                }
+            </script>
+        </div>
+    </div>
+    <div id="step3" style="display: none;">
+        <img src="images/step3/闷黄.gif" id="step3_txt" style="z-index: 999; display: inline-block; position: absolute;">
+        <img src="images/字幕/闷黄字幕.png" id="step3_txt_png"
+             style="z-index: 999; display: inline-block; position: absolute;display: none;">
+
+        <img src="images/step3/闷黄未打开.png" alt="" id="yellow_openless"
+             style="z-index: 2; display: inline-block; position: fixed;display: none;">
+        <img src="images/step3/闷黄打开2.png" alt="" id="yellow_open"
+             style="z-index: 3; display: inline-block; position: fixed;display: none;">
+        <div style="z-index: 4; display: inline-block; position: absolute;" id="onclick01"></div>
+        <div class="dragbox" style="display: inline-block; position: absolute;"></div>
+        <!-- <div class="draglist" draggable="true" style="position: absolute;">
+            <img assert="images/step2/柴1.png" alt="" id="fire_chai01" style="z-index: 1000; display: inline-block; position: absolute;display: none;">
+            <img assert="images/step2/柴2.png" alt="" id="fire_chai02" style="z-index: 1000; display: inline-block; position: absolute;display: none;">
+            <img assert="images/step2/柴1.png" alt="" id="fire_chai01_start" style="z-index: 1; display: inline-block; position: absolute;">
+            <img assert="images/step2/柴2.png" alt="" id="fire_chai02_start" style="z-index: 1; display: inline-block; position: absolute;">
+        </div> -->
+        <script>
+
+            var step3_txt = document.getElementById('step3_txt')
+            var onclick01 = document.getElementById('onclick01')
+            // var fire_after = document.getElementById('fire_after')
+            // var fire_chai01 = document.getElementById('fire_chai01')
+            // var fire_chai02 = document.getElementById('fire_chai02')
+            // var fire_chai01_start = document.getElementById('fire_chai01_start')
+            // var fire_chai02_start = document.getElementById('fire_chai02_start')
+            if (width_window > height_window) {
+                //下方文字————定位————大小
+                step3_txt.style.height = height_window * 0.5 + 'px';
+                step3_txt.style.top = height_window * 0.5 + 'px';
+                step3_txt.style.right = -page_width * 0.25 + 'px';
+
+                step3_txt_png.style.height = height_window * 0.264 + 'px';
+                step3_txt_png.style.top = height_window * 0.613 + 'px';
+                step3_txt_png.style.right = page_width * 0.103 + 'px';
+
+                yellow_openless.style.height = height_window + 'px'
+                yellow_openless.style.left = (width_window - height_window * 3 / 4.3) / 2 + 'px';
+                yellow_openless.style.width = height_window * 3 / 4.3 + 'px';
+
+                yellow_open.style.height = height_window + 'px'
+                yellow_open.style.left = (width_window - height_window * 3 / 4.3) / 2 + 'px';
+                yellow_open.style.width = height_window * 3 / 4.3 + 'px';
+
+                onclick01.style.top = 0.23 * height_window + 'px';
+                onclick01.style.left = page_width * 0.345 + 'px';
+                onclick01.style.height = 0.116 * height_window + 'px';
+                onclick01.style.width = 0.105 * height_window * 1.73 + 'px';
+                // fire_chai01.style.height = 0.07 * height_window+ 'px';
+                // fire_chai02.style.height = 0.06 * height_window+ 'px';
+                // fire_chai01_start.style.height = 0.07 * height_window+ 'px';
+                // fire_chai02_start.style.height = 0.06 * height_window+ 'px';
+
+                // fire_chai01.style.top = 0.39 * height_window+ 'px';
+                // fire_chai01.style.transform = 'rotateZ(15deg)';
+                // fire_chai01.style.left = 0.24 * page_width + 'px';
+                // fire_chai02.style.top = 0.39 * height_window+ 'px';
+                // fire_chai02.style.left = 0.28 * page_width + 'px';
+
+                // fire_chai01_start.style.left = page_width * 0.18 + 'px';
+                // fire_chai01_start.style.transform = 'rotateZ(90deg)';
+                // fire_chai01_start.style.top = 0.502 * height_window + 'px';
+                // fire_chai02_start.style.left = page_width * 0.33 + 'px';
+                // fire_chai02_start.style.transform = 'rotateZ(260deg)';
+                // fire_chai02_start.style.top = 0.5015 * height_window + 'px';
+            } else {
+                //下方文字————定位————大小
+                step3_txt.style.height = page_height * 0.27 + 'px';
+                step3_txt.style.top = page_height * 0.62 + 'px';
+                step3_txt.style.left = width_window * 0.12 + 'px';
+            }
+
+            var touch01_times = 0;
+            onclick01.onclick = function () {
+                if (touch01_times == 0) {
+                    yellow_openless.style.display = '';
+                    touch01_times = 1;
+                    fangxiachaye.load();
+                    fangxiachaye.play();
+                } else if (touch01_times == 1) {
+                    yellow_openless.style.display = 'none';
+                    touch01_times = 2;
+                    naqichaye.load();
+                    naqichaye.play();
+                } else if (touch01_times == 2) {
+                    yellow_openless.style.display = '';
+                    touch01_times = 3;
+                    fangxiachaye.load();
+                    fangxiachaye.play();
+                } else if (touch01_times == 3) {
+                    yellow_open.style.display = '';
+                    touch01_times = 4;
+                    naqichaye.load();
+                    naqichaye.play();
+
+                    load_picture.src = 'images/提示/烘焙.png'
+                    showTheLoading_out();
+                } else {
+                }
+            }
+        </script>
+    </div>
+    <div id="step4" style="display: none;">
+        <img src="images/step4/烘焙.gif" id="step4_txt" style="z-index: 5; display: inline-block; position: absolute;">
+        <img src="images/字幕/烘焙字幕.png" id="step4_txt_png"
+             style="z-index: 5; display: inline-block; position: absolute;display: none;">
+
+        <img src="images/step4/烘焙2.png" id="onclick02_touch1"
+             style="z-index: 2; display: inline-block; position: fixed;display: none;">
+        <img src="images/step4/烘焙关盖.png" id="onclick02_touch2"
+             style="z-index: 3; display: inline-block; position: fixed;display: none;">
+        <div class="dragbox" style="display: inline-block; position: absolute;"></div>
+        <img src="images/step4/箭头.png" style="z-index: 4; display: inline-block; position: absolute;" alt=""
+             id="onclick02">
+        <!-- <div style="z-index: 1; display: inline-block; position: absolute; background-color: rgb(59, 231, 231, 0.5);" id="onclick03"></div> -->
+        <script>
+            var onclick02 = document.getElementById('onclick02')
+            var onclick03 = document.getElementById('onclick03')
+            var step4_txt = document.getElementById('step4_txt')
+            if (width_window < height_window) {
+                //下方文字————定位————大小
+                step4_txt.style.height = page_height * 0.27 + 'px';
+                step4_txt.style.top = page_height * 0.62 + 'px';
+                step4_txt.style.left = width_window * 0.12 + 'px';
+            } else {
+                //下方文字————定位————大小
+                step4_txt.style.height = height_window * 0.5 + 'px';
+                step4_txt.style.top = height_window * 0.5 + 'px';
+                step4_txt.style.right = -page_width * 0.25 + 'px';
+
+                step4_txt_png.style.height = height_window * 0.266 + 'px';
+                step4_txt_png.style.top = height_window * 0.616 + 'px';
+                step4_txt_png.style.right = page_width * 0.106 + 'px';
+
+                onclick02.style.height = 0.03 * height_window + 'px';
+                // onclick02.style.width = 0.06 * height_window + 'px';
+                onclick02.style.left = page_width * 0.36 + 'px';
+                onclick02.style.top = 0.16 * height_window + 'px';
+
+                // onclick03.style.top = 0.23 * height_window + 'px';
+                // onclick03.style.left = page_width * 0.345 + 'px';
+                // onclick03.style.height = 0.116 * height_window + 'px';
+                // onclick03.style.width = 0.105 * height_window * 1.73 + 'px';
+                onclick02_touch1.style.height = height_window + 'px'
+                onclick02_touch1.style.left = (width_window - height_window * 3 / 4.3) / 2 + 'px';
+                onclick02_touch1.style.width = height_window * 3 / 4.3 + 'px';
+
+                onclick02_touch2.style.height = height_window + 'px'
+                onclick02_touch2.style.left = (width_window - height_window * 3 / 4.3) / 2 + 'px';
+                onclick02_touch2.style.width = height_window * 3 / 4.3 + 'px';
+
+            }
+            onclick02_touchtimes = 0
+            onclick02.onclick = function () {
+                if (onclick02_touchtimes == 0) {
+                    onclick02.style.top = 0.265 * height_window + 'px';
+                    onclick02.style.left = page_width * 0.61 + 'px';
+                    onclick02.style.height = 0.226 * height_window + 'px';
+                    onclick02.style.width = 0.225 * page_width + 'px';
+                    onclick02.src = ''
+                    // onclick02.style.backgroundColor = 'rgb(59, 231, 231, 0.5)'
+                    onclick02.style.opacity = 0
+                    onclick02_touchtimes = 1
+                    onclick02_touch1.style.display = ''
+                    yezi_freesound.load();
+                    yezi_freesound.play();
+                } else if (onclick02_touchtimes == 1) {
+                    onclick02_touch2.style.display = ''
+                    onclick02_touchtimes = 2
+                    menghuangdakaibaoguo.load();
+                    menghuangdakaibaoguo.play();
+
+                    load_picture.src = 'images/提示/干燥.png'
+                    showTheLoading_out();
+                } else {
+                }
+            }
+        </script>
+    </div>
+    <div id="step5" style="display: none;">
+        <img src="images/step5/干燥.gif" id="step5_txt" style="z-index: 999; display: inline-block; position: absolute;">
+        <img src="images/字幕/干燥字幕.png" id="step5_txt_png"
+             style="z-index: 999; display: inline-block; position: absolute;display: none;">
+
+        <div class="dragbox" style="display: inline-block; position: absolute;">
+            <div class="draglist" draggable="true" style="position: absolute;">
+                <img src="images/step5/干燥一堆茶叶.png" alt="" id="the_ganzaochaye"
+                     style="z-index: 1; display: inline-block; position: absolute;">
+                <img src="images/step5/干燥实筐.png" alt="" id="the_ganzaoshikuang"
+                     style="z-index: 1; display: inline-block; position: absolute; display: none;">
+                <img src="images/step5/干燥2.png" alt="" id="the_ganzao_after"
+                     style="z-index: 2; display: inline-block; position: fixed; display: none;">
+            </div>
+        </div>
+        <script>
+            var step5_txt = document.getElementById('step5_txt')
+            if (width_window < height_window) {
+                //下方文字————定位————大小
+                step5_txt.style.height = page_height * 0.27 + 'px';
+                step5_txt.style.top = page_height * 0.62 + 'px';
+                step5_txt.style.left = width_window * 0.12 + 'px';
+            } else {
+                //下方文字————定位————大小
+                step5_txt.style.height = height_window * 0.5 + 'px';
+                step5_txt.style.top = height_window * 0.5 + 'px';
+                step5_txt.style.right = -page_width * 0.25 + 'px';
+
+                step5_txt_png.style.height = height_window * 0.266 + 'px';
+                step5_txt_png.style.top = height_window * 0.616 + 'px';
+                step5_txt_png.style.right = page_width * 0.106 + 'px';
+
+
+                var the_ganzaochaye = document.getElementById('the_ganzaochaye');
+                var the_ganzaoshikuang = document.getElementById('the_ganzaoshikuang');
+                the_ganzaochaye.style.height = 0.087 * height_window + 'px';
+                the_ganzaoshikuang.style.height = 0.182 * height_window + 'px';
+
+                the_ganzaochaye.style.left = page_width * 0.68 + 'px';
+                the_ganzaochaye.style.top = 0.32 * height_window + 'px';
+                the_ganzaoshikuang.style.left = page_width * 0.43 + 'px';
+                the_ganzaoshikuang.style.top = 0.39 * height_window + 'px';
+
+                the_ganzao_after.style.height = height_window + 'px'
+                the_ganzao_after.style.left = (width_window - height_window * 3 / 4.3) / 2 + 'px';
+                the_ganzao_after.style.width = height_window * 3 / 4.3 + 'px';
+            }
+            the_ganzaochaye.onmousedown = function () {
+                naqichaye.load();
+                naqichaye.play();
+            }
+        </script>
+    </div>
+    <div id="step6" style="display: none;">
+        <img src="images/step6/成茶.gif" id="step6_txt" style="z-index: 999; display: inline-block; position: absolute;">
+        <img src="images/字幕/成茶字幕.png" id="step6_txt_png"
+             style="z-index: 999; display: inline-block; position: absolute;display: none;">
+
+        <div style="display: inline-block; position: absolute;" id="text__">
+            <p style="width: 22px; display: inline-block; font-size: 22px; font-family: '宋体';">进 度 : 0 / 6 </p>
+        </div>
+        <div class="dragbox" style="display: inline-block; position: absolute;"></div>
+        <!-- <img assert="images/step6/成茶.png" alt="" id="the_ch/engcha01" style="z-index: -999; display: inline-block; position: fixed;"> -->
+        <img src="images/step6/成茶2.png" alt="" id="the_chengcha02_2"
+             style="z-index: 1; display: inline-block; position: absolute; ">
+        <!-- <img assert="images/step6/成茶3.png" alt="" id="the_chengcha02_1" style="z-index: -998; display: inline-block; position: fixed;"> -->
+        <div>
+            <a href="script:;">
+                <img src="images/step6/杂1.png" alt="" style="display: inline-block; position: absolute;z-index: 1"
+                     id="touch04_1">
+            </a>
+            <a href="script:;">
+                <img src="images/step6/杂2.png" alt="" style="display: inline-block; position: absolute;z-index: 1"
+                     id="touch04_2">
+            </a>
+            <a href="script:;">
+                <img src="images/step6/杂3.png" alt="" style="display: inline-block; position: absolute;z-index: 1"
+                     id="touch04_3">
+            </a>
+            <a href="script:;">
+                <img src="images/step6/杂4.png" alt="" style="display: inline-block; position: absolute;z-index: 1"
+                     id="touch04_4">
+            </a>
+            <a href="script:;">
+                <img src="images/step6/杂5.png" alt="" style="display: inline-block; position: absolute;z-index: 1"
+                     id="touch04_5">
+            </a>
+            <a href="script:;">
+                <img src="images/step6/杂6.png" alt="" style="display: inline-block; position: absolute;z-index: 1"
+                     id="touch04_6">
+            </a>
+            <script>
+                var text__ = document.getElementById('text__')
+                var touch04_1 = document.getElementById('touch04_1');
+                touch04_1.style.top = 0.26 * height_window + 'px';
+                touch04_1.style.left = page_width * 0.4 + 'px';
+                touch04_1.style.height = 0.025 * height_window + 'px';
+                var touch04_2 = document.getElementById('touch04_2');
+                touch04_2.style.top = 0.35 * height_window + 'px';
+                touch04_2.style.left = page_width * 0.38 + 'px';
+                touch04_2.style.height = 0.015 * height_window + 'px';
+                var touch04_3 = document.getElementById('touch04_3');
+                touch04_3.style.top = 0.46 * height_window + 'px';
+                touch04_3.style.left = page_width * 0.5 + 'px';
+                touch04_3.style.height = 0.015 * height_window + 'px';
+                var touch04_4 = document.getElementById('touch04_4');
+                touch04_4.style.top = 0.4 * height_window + 'px';
+                touch04_4.style.left = page_width * 0.48 + 'px';
+                touch04_4.style.height = 0.015 * height_window + 'px';
+                var touch04_5 = document.getElementById('touch04_5');
+                touch04_5.style.top = 0.3 * height_window + 'px';
+                touch04_5.style.left = page_width * 0.6 + 'px';
+                touch04_5.style.height = 0.02 * height_window + 'px';
+                var touch04_6 = document.getElementById('touch04_6');
+                touch04_6.style.top = 0.4 * height_window + 'px';
+                touch04_6.style.left = page_width * 0.3 + 'px';
+                touch04_6.style.height = 0.02 * height_window + 'px';
+            </script>
+        </div>
+        <script>
+            var step6_txt = document.getElementById('step6_txt')
+
+            if (width_window < height_window) {
+                //下方文字————定位————大小
+                step6_txt.style.height = page_height * 0.27 + 'px';
+                step6_txt.style.top = page_height * 0.62 + 'px';
+                step6_txt.style.left = width_window * 0.12 + 'px';
+            } else {
+                //下方文字————定位————大小
+                step6_txt.style.height = height_window * 0.5 + 'px';
+                step6_txt.style.top = height_window * 0.5 + 'px';
+                step6_txt.style.right = -page_width * 0.25 + 'px';
+
+                step6_txt_png.style.height = height_window * 0.266 + 'px';
+                step6_txt_png.style.top = height_window * 0.617 + 'px';
+                step6_txt_png.style.right = page_width * 0.301 + 'px';
+
+                text__.style.top = height_window * 0.62 + 'px';
+                text__.style.right = page_width * 0.11 + 'px';
+
+                var the_chengcha02_2 = document.getElementById('the_chengcha02_2');
+                the_chengcha02_2.style.height = 0.4 * height_window + 'px';
+                the_chengcha02_2.style.top = 0.16 * height_window + 'px';
+                the_chengcha02_2.style.left = page_width * 0.19 + 'px';
+            }
+            touch04_times = 0
+            touch04_1.onclick = function () {
+                fangxiachaye.load()
+                fangxiachaye.play()
+                touch04_times++;
+                touch04_1.style.display = 'none';
+                text__.innerText = '进度 : ' + touch04_times + ' / 6'
+                text__.style.width = '22px'
+                text__.style.fontFamily = '宋体'
+                text__.style.fontSize = '22px'
+
+                if (touch04_times == 6) {
+                    touch04_6.style.display = 'none';
+                    text__.innerText = '进度 : 完成'
+                    text__.style.width = '22px'
+                    text__.style.fontFamily = '宋体'
+                    text__.style.fontSize = '22px'
+                    step7_start();
+                    step7_show();
+                }
+            }
+            touch04_2.onclick = function () {
+                fangxiachaye.load()
+                fangxiachaye.play()
+                touch04_times++;
+                touch04_2.style.display = 'none';
+                text__.innerText = '进度 : ' + touch04_times + ' / 6'
+                text__.style.width = '22px'
+                text__.style.fontFamily = '宋体'
+                text__.style.fontSize = '22px'
+
+                if (touch04_times == 6) {
+                    touch04_6.style.display = 'none';
+                    text__.innerText = '进度 : 完成'
+                    text__.style.width = '22px'
+                    text__.style.fontFamily = '宋体'
+                    text__.style.fontSize = '22px'
+                    step7_start();
+                    step7_show();
+                }
+            }
+            touch04_3.onclick = function () {
+                fangxiachaye.load()
+                fangxiachaye.play()
+                touch04_times++;
+                touch04_3.style.display = 'none';
+                text__.innerText = '进度 : ' + touch04_times + ' / 6'
+                text__.style.width = '22px'
+                text__.style.fontFamily = '宋体'
+                text__.style.fontSize = '22px'
+
+                if (touch04_times == 6) {
+                    touch04_6.style.display = 'none';
+                    text__.innerText = '进度 : 完成'
+                    text__.style.width = '22px'
+                    text__.style.fontFamily = '宋体'
+                    text__.style.fontSize = '22px'
+                    step7_start();
+                    step7_show();
+                }
+            }
+            touch04_4.onclick = function () {
+                fangxiachaye.load()
+                fangxiachaye.play()
+                touch04_times++;
+                touch04_4.style.display = 'none';
+                text__.innerText = '进度 : ' + touch04_times + ' / 6'
+                text__.style.width = '22px'
+                text__.style.fontFamily = '宋体'
+                text__.style.fontSize = '22px'
+
+                if (touch04_times == 6) {
+                    touch04_6.style.display = 'none';
+                    text__.innerText = '进度 : 完成'
+                    text__.style.width = '22px'
+                    text__.style.fontFamily = '宋体'
+                    text__.style.fontSize = '22px'
+                    step7_start();
+                    step7_show();
+                }
+            }
+            touch04_5.onclick = function () {
+                fangxiachaye.load()
+                fangxiachaye.play()
+                touch04_times++;
+                touch04_5.style.display = 'none';
+                text__.innerText = '进度 : ' + touch04_times + ' / 6'
+                text__.style.width = '22px'
+                text__.style.fontFamily = '宋体'
+                text__.style.fontSize = '22px'
+
+                if (touch04_times == 6) {
+                    touch04_6.style.display = 'none';
+                    text__.innerText = '进度 : 完成'
+                    text__.style.width = '22px'
+                    text__.style.fontFamily = '宋体'
+                    text__.style.fontSize = '22px'
+                    step7_start();
+                    step7_show();
+                }
+            }
+            touch04_6.onclick = function () {
+                fangxiachaye.load()
+                fangxiachaye.play()
+                touch04_times++;
+                touch04_6.style.display = 'none';
+                text__.innerText = '进度 : ' + touch04_times + ' / 6'
+                text__.style.width = '22px'
+                text__.style.fontFamily = '宋体'
+                text__.style.fontSize = '22px'
+
+                if (touch04_times == 6) {
+                    touch04_6.style.display = 'none';
+                    text__.innerText = '进度 : 完成'
+                    text__.style.width = '22px'
+                    text__.style.fontFamily = '宋体'
+                    text__.style.fontSize = '22px'
+                    step7_start();
+                    step7_show();
+                }
+            }
+        </script>
+    </div>
+</div>
+<img src="images/step7/1.png" alt="" id="end_all_picture"
+     style="z-index: 99998; display: inline-block; position: absolute;display: none;">
+<div id="step7" style="display: none;">
+    <img src="images/step7/泡茶.gif" id="step7_txt" style="z-index: 999; display: inline-block; position: absolute;">
+    <img src="images/字幕/泡茶字幕.png" id="step7_txt_png"
+         style="z-index: 999; display: inline-block; position: absolute;display: none;">
+    <div class="dragbox" style="display: inline-block; position: absolute;">
+        <div class="draglist" draggable="true" style="position: absolute;">
+            <img src="images/step7/new_gif.gif" alt="" id="step7_chapan_before"
+                 style="z-index: 1; display: inline-block; position: absolute;">
+            <!-- <img assert="images/step7/1茶壶水蒸气.gif" alt="" id="step7_chahu_before" style="z-index: 1; display: inline-block; position: absolute;"> -->
+
+            <!-- <a href="javascript:goto_end_all()" style="width: 18px; font-size: 18px; display: inline-block; position: fixed;z-index: 11;color: black;display: none;" id="end_all">结束</a> -->
+            <script>
+                var end_all = document.getElementById('end_all')
+                var step7_txt = document.getElementById('step7_txt')
+                var end_all_picture = document.getElementById('end_all_picture')
+                step7_txt.style.height = height_window * 0.5 + 'px';
+                step7_txt.style.top = height_window * 0.5 + 'px';
+                step7_txt.style.right = width_window / 2 - page_width / 2 - page_width * 0.14 + 'px';
+
+                end_all_picture.style.height = height_window + 'px';
+                end_all_picture.style.width = page_width + 'px';
+                // step7_chapan_before.style.width = 0.3 * height_window +'px';
+                end_all_picture.style.left = width_window / 2 - page_width * 0.5 + 'px';
+                end_all_picture.style.top = 0 + 'px';
+
+                end_all.style.top = height_window * 0.8 + 'px';
+                end_all.style.right = page_width * 0.11 + width_window / 2 - page_width / 1.98 + 'px';
+
+                function goto_end_all() {
+                    book.style.display = 'none'
+                    step7_chapan_before.style.display = 'none'
+                    end_all_picture.style.display = ''
+                }
+            </script>
+        </div>
+    </div>
+    <script>
+        // var step5_txt = document.getElementById('step5_txt')
+        if (width_window < height_window) {
+            //下方文字————定位————大小
+            // step5_txt.style.height = page_height*0.27 + 'px';
+            // step5_txt.style.top = page_height*0.62 + 'px';
+            // step5_txt.style.left = width_window*0.12 + 'px';
+        } else {
+            //下方文字————定位————大小
+            // step5_txt.style.height = height_window*0.26 +'px';
+            // step5_txt.style.top = height_window*0.62 + 'px';
+            // step5_txt.style.left = page_width*0.12 + 'px';
+
+            step7_txt_png.style.height = height_window * 0.272 + 'px';
+            step7_txt_png.style.top = height_window * 0.614 + 'px';
+            step7_txt_png.style.right = width_window / 2 - page_width * 0.395 + 'px';
+
+            var step7_chapan_before = document.getElementById('step7_chapan_before');
+            // var step7_chahu_before = document.getElementById('step7_chahu_before');
+            step7_chapan_before.style.height = height_window + 'px';
+            step7_chapan_before.style.width = page_width + 'px';
+            // step7_chapan_before.style.width = 0.3 * height_window +'px';
+            step7_chapan_before.style.left = width_window / 2 - page_width * 0.5 + 'px';
+            step7_chapan_before.style.top = 0 + 'px';
+
+            // step7_chahu_before.style.height = height_window +'px';
+            // step7_chahu_before.style.left = width_window/2 - page_width * 0.6 +'px';
+            // step7_chahu_before.style.top = - height_window * 0.02 +'px';
+
+            // step7_chahu_before.style.transition = '2s';
+            function step7_show() {
+                setTimeout(
+                    function () {
+                        // step7_chapan_before.assert = "images/step7/静态.png";
+                        // end_all.style.display = ''
+                        book.style.display = 'none'
+                        step7_chapan_before.style.display = 'none'
+                        end_all_picture.style.display = ''
+                    }, 14000)
+            }
+
+            function step7_start() {
+                setTimeout(
+                    function () {
+                        step7.style.display = "";
+                        show_txt_gif_to_png(9100, 7)
+                    }, 1500)
+            }
+
+            step4_txt_png.style.height = height_window * 0.266 + 'px';
+            step4_txt_png.style.top = height_window * 0.616 + 'px';
+            step4_txt_png.style.right = page_width * 0.106 + 'px';
+
+            function show_txt_gif_to_png(change_time, change_thing_num) {
+                setTimeout(
+                    function () {
+                        if (change_thing_num == 1) {
+                            step1_txt_png.style.display = "";
+                            step1_txt.style.display = "none";
+                        } else if (change_thing_num == 2) {
+                            step2_txt_png.style.display = "";
+                            step2_txt.style.display = "none";
+                        } else if (change_thing_num == 3) {
+                            step3_txt_png.style.display = "";
+                            step3_txt.style.display = "none";
+                        } else if (change_thing_num == 4) {
+                            step4_txt_png.style.display = "";
+                            step4_txt.style.display = "none";
+                        } else if (change_thing_num == 5) {
+                            step5_txt_png.style.display = "";
+                            step5_txt.style.display = "none";
+                        } else if (change_thing_num == 6) {
+                            step6_txt_png.style.display = "";
+                            step6_txt.style.display = "none";
+                        } else if (change_thing_num == 7) {
+                            step7_txt_png.style.display = "";
+                            step7_txt.style.display = "none";
+                        }
+                    }, change_time)
+            }
+
+            // the_ganzao_after.style.height = height_window + 'px'
+            // the_ganzao_after.style.left = (width_window-height_window*3/4.3)/2 + 'px';
+            // the_ganzao_after.style.width = height_window*3/4.3 + 'px';
+        }
+        // the_ganzaochaye.onmousedown = function(){
+        //     naqichaye.load();
+        //     naqichaye.play();
+        // }
+    </script>
+</div>
+</body>
+
+<script>
+    var $ = function (selector) {
+        if (!selector) {
+            return [];
+        }
+        var arrEle = [];
+        if (document.querySelectorAll) {
+            arrEle = document.querySelectorAll(selector);
+        } else {
+            var oAll = document.getElementsByTagName("div"), lAll = oAll.length;
+            if (lAll) {
+                var i = 0;
+                for (i; i < lAll; i += 1) {
+                    if (/^\./.test(selector)) {
+                        if (oAll[i].className === selector.replace(".", "")) {
+                            arrEle.push(oAll[i]);
+                        }
+                    } else if (/^#/.test(selector)) {
+                        if (oAll[i].id === selector.replace("#", "")) {
+                            arrEle.push(oAll[i]);
+                        }
+                    }
+                }
+            }
+        }
+        return arrEle;
+    };
+
+    var eleDustbin = $(".dustbin")[0], eleDrags = $(".draglist"), lDrags = eleDrags.length,
+        eleRemind = $(".dragremind")[0], eleDrag = null;
+    for (var i = 0; i < lDrags; i += 1) {
+        eleDrags[i].onselectstart = function () {
+            return false;
+        };
+        eleDrags[i].ondragstart = function (ev) {
+            ev.dataTransfer.effectAllowed = "move";
+            ev.dataTransfer.setData("text", ev.target.innerHTML);
+            ev.dataTransfer.setDragImage(ev.target, 0, 0);
+            eleDrag = ev.target;
+            return true;
+        };
+        eleDrags[i].ondragend = function (ev) {
+            ev.dataTransfer.clearData("text");
+            eleDrag = null;
+            return false
+        };
+    }
+    eleDustbin.ondragover = function (ev) {
+        ev.preventDefault();
+        return true;
+    };
+
+    eleDustbin.ondragenter = function (ev) {
+        this.style.color = "#ffffff";
+        return true;
+    };
+    eleDustbin.ondrop = function (ev) {
+        if (eleDrag) {
+            eleDrag.parentNode.removeChild(eleDrag);
+            if (time_step == 0) {
+                naqichaye.load();
+                fangxiachaye.play();
+                if (width_window > height_window) {
+                    step01_the_kongzhubian_image.style.opacity = 0;
+                    step01_the_kongzhubian_image.style.left = page_width * 0.15 + 'px';
+                    step01_the_kongzhubian_image.style.top = height_window * 0.16 + 'px';
+                    step01_the_kongzhubian_image.style.height = height_window * 0.4 + 'px';
+                    step01_the_kongzhubian_image.style.width = height_window * 0.21 + 'px';
+                } else {
+                }
+
+                time_step = 100;
+            } else if (time_step == 100) {
+                weifang.style.display = ''
+                menghuangdakaibaoguo.load();
+                menghuangdakaibaoguo.play();
+                if (width_window > height_window) {
+                    step01_the_kongzhubian_image.src = 'images/step2/放柴洞.png'
+                    step01_the_kongzhubian_image.style.left = page_width * 0.23 + 'px';
+                    step01_the_kongzhubian_image.style.top = height_window * 0.38 + 'px';
+                    step01_the_kongzhubian_image.style.height = height_window * 0.052 + 'px';
+                    step01_the_kongzhubian_image.style.width = height_window * 0.072 + 'px';
+                } else {
+                }
+                //接界面弹出
+                time_step = 200;
+
+                load_picture.src = 'images/提示/杀青揉捻.png'
+                showTheLoading_out();
+            } else if (time_step == 200) {
+                fire_chai01.style.display = ''
+                menghuangdakaibaoguo.load();
+                menghuangdakaibaoguo.play();
+                time_step = 300;
+            } else if (time_step == 300) {
+                menghuangdakaibaoguo.load();
+                menghuangdakaibaoguo.play();
+                fire_chai02.style.display = ''
+                fire_after.style.display = ''
+                time_step = 400;
+                step01_the_kongzhubian_image.style.opacity = 0
+                fangruchaihuohou.load();
+                fangruchaihuohou.play();
+                step01_the_kongzhubian_image.src = 'images/step5/干燥空筐.png'
+                step01_the_kongzhubian_image.style.height = 0.182 * height_window + 'px';
+                step01_the_kongzhubian_image.style.height = 0.182 * height_window + 'px';
+                step01_the_kongzhubian_image.style.width = 0.182 * height_window * 0.793 + 'px';
+                step01_the_kongzhubian_image.style.left = page_width * 0.43 + 'px';
+                step01_the_kongzhubian_image.style.top = 0.39 * height_window + 'px';
+                time_step = 400;
+
+                load_picture.src = 'images/提示/闷黄.png'
+                showTheLoading_out();
+            } else if (time_step == 400) {
+                fangxiachaye.play();
+                the_ganzaoshikuang.style.display = ''
+                step01_the_kongzhubian_image.style.filter = 'opacity(0%)';
+                // step01_the_kongzhubian_image.style.backgroundColor = 'rgb(59, 231, 231, 0.5)'
+                step01_the_kongzhubian_image.style.top = 0.28 * height_window + 'px';
+                step01_the_kongzhubian_image.style.left = 0.18 * page_width + 'px';
+                time_step = 500;
+            } else if (time_step == 500) {
+                menghuangdakaibaoguo.play();
+                the_ganzao_after.style.display = '';
+                // document.getElementById('step5_steps02').style.display = 'none';
+                // the_ganzao_after.style.display = '';
+                time_step = 600;
+
+                load_picture.src = 'images/提示/成茶.png'
+                showTheLoading_out();
+            }
+            // else if(time_step==200)
+            // {
+            //     if(what_will_happen == 0)
+            //     {
+            //         step2_the_chai1.style.display = '';
+            //         what_will_happen =1;
+            //         document.getElementById('step2_steps01').style.display = 'none';
+            //         document.getElementById('step2_steps02').style.display = '';
+            //         menghuangdakaibaoguo.load();
+            //         menghuangdakaibaoguo.play();
+            //     }
+            //     else if(what_will_happen == 1)
+            //     {
+            //         step2_the_chai2.style.display = '';
+            //         what_will_happen = 2;
+            //         document.getElementById('step2_steps02').style.display = 'none';
+            //         document.getElementById('step2_text_after').style.display = '';
+            //         menghuangdakaibaoguo.load();
+            //         menghuangdakaibaoguo.play();
+            //     }
+            //     if(what_will_happen == 2)
+            //     {
+            //         step2_the_book_after.style.display = '';
+            //         step2_text_after.style.display = '';
+            //         fangruchaihuohou.load();
+            //         fangruchaihuohou.play();
+            //     }
+            // }
+            // else if(time_step==300)
+            // {
+            //     if(times==0){
+            //         the_ganzaoshikuang.style.display = '';
+            //         step01_the_kongzhubian_image.style.filter = 'opacity(0%)';
+            //         step01_the_kongzhubian_image.style.top = 0.27*height_window;
+            //         step01_the_kongzhubian_image.style.left = 0.38*width_window;
+            //         document.getElementById('step5_steps01').style.display = 'none';
+            //         document.getElementById('step5_steps02').style.display = '';
+            //         times=1;
+            //         fangxiachaye.load();
+            //         fangxiachaye.play();
+            //     }
+            //     else if(times==1)
+            //     {
+            //         the_ganzaoshikuang.style.display = 'none';
+            //         the_kongkuang.style.display = 'none';
+            //         step01_the_kongzhubian_image.style.display = 'none';
+            //         the_ganzao_after.style.display = '';
+            //         document.getElementById('step5_steps02').style.display = 'none';
+            //         document.getElementById('step5_steps03').style.display = '';
+            //         times=2;
+            //         menghuangdakaibaoguo.load();
+            //         menghuangdakaibaoguo.play();
+            //     }
+        }
+        this.style.color = "#000000";
+        return false;
+    };
+</script>
+</html>
